@@ -737,8 +737,9 @@ tr.lk .cb input{cursor:not-allowed}
   async function getGuru(){
     if(guruNow)return guruNow;
     var n='';
-    try{var ac=JSON.parse(sessionStorage.getItem('madani_acct')||'null');if(ac&&ac.nama)n=ac.nama;}catch(_){}
-    if(!n){try{var ss=JSON.parse(sessionStorage.getItem('madani_session')||'null');if(ss&&ss.nama)n=ss.nama;}catch(_){}}
+    /* sesi login (index.html) adalah sumber utama; madani_acct hanya cadangan */
+    try{var ss=JSON.parse(sessionStorage.getItem('madani_session')||'null');if(ss&&ss.nama)n=ss.nama;}catch(_){}
+    if(!n){try{var ac=JSON.parse(sessionStorage.getItem('madani_acct')||'null');if(ac&&ac.nama)n=ac.nama;}catch(_){}}
     if(!n){
       try{
         var rp=await db.from('profil').select('nama_guru').order('id',{ascending:true}).limit(1).maybeSingle();
@@ -748,6 +749,10 @@ tr.lk .cb input{cursor:not-allowed}
     guruNow=clean(n);
     return guruNow;
   }
+  /* mapel guru ini dimuat sekali; data absensi yang tampil disaring dengannya */
+  var mapelP=null;
+  function ensureMapel(){return mapelP||(mapelP=loadMapel());}
+  function mine(n){var k=normNm(n);return !!k&&mapelList.some(function(m){return normNm(m)===k;});}
   async function loadMapel(){
     var set={},g=await getGuru(),gk=normNm(g);
     try{
@@ -799,7 +804,8 @@ tr.lk .cb input{cursor:not-allowed}
         if(!r.data||r.data.length<step)break;
         from+=step;
       }
-      all_=out;
+      await ensureMapel();
+      all_=out.filter(function(r){return mine(r.mata_pelajaran);});   /* hanya absensi mapel milik guru yang login */
     }catch(e){all_=[];toast('Gagal memuat absensi: '+tableMsg(e),'err');}
     pickSaved();
     applyExisting();
@@ -1325,7 +1331,7 @@ tr.lk .cb input{cursor:not-allowed}
 
   $('bRefresh').addEventListener('click',async function(){
     if(busy)return;setBusy(true);
-    await loadKelas();await loadMapel();await loadSiswa();await loadSaved();
+    await loadKelas();await (mapelP=loadMapel());await loadSiswa();await loadSaved();
     setBusy(false);toast('Data terbaru ditampilkan.','ok');
   });
 
@@ -1351,7 +1357,7 @@ tr.lk .cb input{cursor:not-allowed}
   paintNav();
   renderStudents();renderSaved();
   loadKelas();
-  loadMapel();
+  ensureMapel();
   loadSaved();
 })();
 </script>
