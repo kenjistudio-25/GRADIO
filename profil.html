@@ -366,6 +366,17 @@ html,body{overflow-x:hidden}
   var cur={foto_url:null,logo_url:null};          // URL tersimpan di database
   var pend={foto:null,logo:null};                  // file baru yang belum diunggah
   var exists=false,busy=false;
+
+  /* Guru yang login (index.html menyimpan id baris profil di sesi). Halaman ini memuat & menyimpan HANYA baris milik guru tsb;
+     tanpa sesi guru (halaman dibuka langsung) -> baris pertama seperti sebelumnya. */
+  function sesId(){
+    try{var s=JSON.parse(sessionStorage.getItem('madani_session')||'null');if(s&&s.role==='guru'&&s.id!=null)return s.id;}catch(_){}
+    return null;
+  }
+  function rowQuery(cols){
+    var q=db.from(TABLE).select(cols),id=sesId();
+    return id!=null?q.eq('id',id):q.order('id',{ascending:true}).limit(1);
+  }
   var DEFAULT_LOGO=$('navLogo').src;
 
   var tt;
@@ -386,11 +397,13 @@ html,body{overflow-x:hidden}
     if(cur.foto_url){av.innerHTML='<img alt="" src="'+cur.foto_url+'">';}else{av.textContent=ini(nm);}
     $('navLogo').src=cur.logo_url||DEFAULT_LOGO;
     $('navTitle').textContent=sk||'Scoria';
+    /* sinkronkan akun yang tampil untuk halaman guru lain */
+    try{if(nm)sessionStorage.setItem('madani_acct',JSON.stringify({nama:nm,foto:cur.foto_url||''}));}catch(_){}
   }
 
   function fill(r){
     FIELDS.forEach(function(f){$(f).value=(r&&r[f])||'';});
-    $('id').value=r&&r.id?r.id:ROW_ID;
+    $('id').value=r&&r.id?r.id:(sesId()!=null?sesId():ROW_ID);
     cur.foto_url=r&&r.foto_url||null;cur.logo_url=r&&r.logo_url||null;
     pend.foto=pend.logo=null;$('fFoto').value='';$('fLogo').value='';
     preview('foto',cur.foto_url);preview('logo',cur.logo_url);
@@ -434,7 +447,7 @@ html,body{overflow-x:hidden}
   async function load(){
     var ok=true;setBusy(true);
     try{
-      var r=await db.from(TABLE).select('*').order('id',{ascending:true}).limit(1).maybeSingle();
+      var r=await rowQuery('*').maybeSingle();
       if(r.error)throw r.error;
       exists=!!r.data;fill(r.data);
     }catch(e){
@@ -465,10 +478,10 @@ html,body{overflow-x:hidden}
     var oldFoto=cur.foto_url,oldLogo=cur.logo_url,newFoto=null,newLogo=null;
     try{
       /* cek apakah data sudah ada di tabel */
-      var ck=await db.from(TABLE).select('id').order('id',{ascending:true}).limit(1).maybeSingle();
+      var ck=await rowQuery('id').maybeSingle();
       if(ck.error)throw ck.error;
       exists=!!ck.data;
-      var rid=exists?ck.data.id:ROW_ID;
+      var rid=exists?ck.data.id:(sesId()!=null?sesId():ROW_ID);
 
       if(pend.foto)newFoto=await upload('foto',pend.foto);
       if(pend.logo)newLogo=await upload('logo',pend.logo);
@@ -483,7 +496,7 @@ html,body{overflow-x:hidden}
         row.updated_at=new Date().toISOString();
         res=await db.from(TABLE).update(row).eq('id',rid).select().single();
       }else{
-        row.id=ROW_ID;
+        row.id=rid;
         res=await db.from(TABLE).insert(row).select().single();
       }
       if(res.error)throw res.error;
