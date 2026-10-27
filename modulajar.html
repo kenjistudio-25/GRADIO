@@ -249,6 +249,24 @@ td.act,th.act{text-align:right;width:1%}
 @media (hover:none){.mc::after{display:none}}
 @media (prefers-reduced-motion:reduce){.mc,.mc.tilting{transform:none!important;transition:none}.mc-top,.mc h3,.mc-mapel,.mc-foot{transform:none}}
 
+/* ===== Modal Duplikat ===== */
+.dup-src{padding:12px 14px;border-radius:14px;background:var(--track);margin-bottom:14px;display:flex;flex-direction:column;gap:2px}
+.dup-src b{font-size:14px;overflow-wrap:anywhere}
+.dup-src span{font-size:12.5px;color:var(--muted)}
+.dup-lbl{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.dup-lbl button{font-size:12.5px;font-weight:700;color:var(--accent);padding:4px 8px;border-radius:8px}
+.dup-lbl button:hover{background:var(--track)}
+.kchoice{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;max-height:min(40vh,300px);overflow-y:auto;padding:2px}
+.kopt{position:relative;display:block;cursor:pointer}
+.kopt input{position:absolute;opacity:0;pointer-events:none}
+.kopt span{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;padding:10px 12px;border-radius:12px;font-size:13.5px;font-weight:700;
+  background:var(--card);border:1.5px solid var(--line);transition:border-color .15s,background .15s,box-shadow .15s}
+.kopt:hover span{border-color:var(--accent)}
+.kopt input:checked+span{border-color:var(--accent);background:rgba(61,155,225,.14);color:#1f6fa8;box-shadow:0 0 0 3px rgba(74,166,230,.18)}
+.kopt input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
+.kopt input:disabled+span{opacity:.5;cursor:not-allowed;background:var(--track)}
+.kopt small{display:block;font-size:10.5px;font-weight:600;color:var(--muted)}
+
 /* ===== Modal Tambah/Ubah Modul Ajar ===== */
 .modal{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;visibility:hidden;opacity:0;transition:opacity .22s,visibility .22s}
 .modal.open{visibility:visible;opacity:1}
@@ -418,6 +436,27 @@ body.modal-open{overflow:hidden}
   </form>
 </div>
 
+<!-- Modal Duplikat Modul Ajar -->
+<div class="modal" id="dupModal" aria-hidden="true">
+  <div class="mback" id="dupBack"></div>
+  <form id="dupFrm" class="msheet panel" novalidate autocomplete="off" role="dialog" aria-modal="true" aria-labelledby="dupTitle">
+    <div class="mhead">
+      <div>
+        <h2 id="dupTitle">Duplikat Modul Ajar</h2>
+        <p class="sub">Pilih kelas tujuan. Modul yang sama akan ditambahkan untuk tiap kelas yang dipilih.</p>
+      </div>
+      <button type="button" class="ib" id="dupClose" aria-label="Tutup" data-i="x"></button>
+    </div>
+    <div class="dup-src" id="dupSrc"></div>
+    <div class="dup-lbl"><span>Kelas tujuan <em style="color:var(--red);font-style:normal">*</em></span><button type="button" id="dupAll">Pilih semua</button></div>
+    <div class="kchoice" id="dupKelas"></div>
+    <div class="actions mact">
+      <button type="button" class="btn sec2" id="dupCancel">Batal</button>
+      <button type="submit" class="btn pri" id="dupGo"><span data-i="copy"></span><span id="dupGoTxt">Duplikat</span></button>
+    </div>
+  </form>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- Sticky footer -->
@@ -449,6 +488,7 @@ body.modal-open{overflow:hidden}
     edit:'<path d="M4 20h4L19 9a2.8 2.8 0 00-4-4L4 16v4zM13.5 6.5l4 4"/>',
     trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13a1 1 0 001 1h8a1 1 0 001-1l1-13M9 7V4h6v3"/>',
     doc:'<path d="M6 3h8l4 4v13a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1zM14 3v4h4M8.5 12h7M8.5 16h5"/>',
+    copy:'<rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 017.5 4H16"/>',
     x:'<path d="M6 6l12 12M18 6L6 18"/>',
     ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"/>'
   };
@@ -461,7 +501,7 @@ body.modal-open{overflow:hidden}
   var tt;
   function toast(t,k){var e=$('toast');e.textContent=t;e.className='toast show '+(k||'');clearTimeout(tt);tt=setTimeout(function(){e.classList.remove('show');},3600);}
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-  function setBusy(b){busy=b;$('bSave').disabled=b;$('bRefresh').disabled=b;$('bNew').disabled=b;}
+  function setBusy(b){busy=b;$('bSave').disabled=b;$('bRefresh').disabled=b;$('bNew').disabled=b;$('dupGo').disabled=b;}
   /* ---------- Modal ---------- */
   function openModal(){
     var m=$('modal');m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');
@@ -607,6 +647,7 @@ body.modal-open{overflow:hidden}
           '<div class="mc-foot">'+
             '<a class="mc-open" href="'+href+'" target="_blank" rel="noopener noreferrer" title="'+esc(r.link_modul)+'">'+svg('ext')+'Buka modul</a>'+
             '<div class="mc-act">'+
+              '<button type="button" class="ib" data-act="dup" data-id="'+r.id+'" aria-label="Duplikat '+esc(r.nama_modul_ajar)+'" title="Duplikat ke kelas lain">'+svg('copy')+'</button>'+
               '<button type="button" class="ib" data-act="edit" data-id="'+r.id+'" aria-label="Ubah '+esc(r.nama_modul_ajar)+'">'+svg('edit')+'</button>'+
               '<button type="button" class="ib del" data-act="del" data-id="'+r.id+'" aria-label="Hapus '+esc(r.nama_modul_ajar)+'">'+svg('trash')+'</button>'+
             '</div>'+
@@ -675,6 +716,7 @@ body.modal-open{overflow:hidden}
   $('tb').addEventListener('click',async function(ev){
     var b=ev.target.closest('button[data-act]');if(!b||busy)return;
     var id=+b.dataset.id;
+    if(b.dataset.act==='dup'){openDup(id);return;}
     if(b.dataset.act==='edit'){startEdit(id);return;}
     var r=rows.find(function(x){return x.id===id;});if(!r)return;
     if(!confirm('Hapus modul ajar "'+r.nama_modul_ajar+'"?'))return;
@@ -706,13 +748,71 @@ body.modal-open{overflow:hidden}
       c.classList.remove('tilting');c.style.setProperty('--rx','0deg');c.style.setProperty('--ry','0deg');
     });
   }
+  /* ---------- Duplikat ke kelas lain ---------- */
+  var dupId=null;
+  function dupBoxes(){return Array.prototype.slice.call($('dupKelas').querySelectorAll('input:not(:disabled)'));}
+  function dupSync(){
+    var bx=dupBoxes(),n=bx.filter(function(x){return x.checked;}).length;
+    $('dupGoTxt').textContent=n?('Duplikat ('+n+')'):'Duplikat';
+    $('dupAll').textContent=(bx.length&&n===bx.length)?'Batal pilih semua':'Pilih semua';
+    $('dupAll').style.display=bx.length?'':'none';
+  }
+  function openDup(id){
+    var r=rows.find(function(x){return x.id===id;});if(!r)return;
+    dupId=id;
+    $('dupSrc').innerHTML='<b>'+esc(r.nama_modul_ajar)+'</b><span>'+esc(r.matapelajaran||'-')+' • Kelas asal: '+esc(r.kelas)+'</span>';
+    var names=kelasRombel.filter(function(k){return k!==r.kelas;});
+    if(!names.length){
+      $('dupKelas').innerHTML='<div class="empty" style="grid-column:1/-1;padding:14px">'+(kelasRombel.length?'Tidak ada kelas lain di halaman Rombel.':'Belum ada data kelas di halaman Rombel.')+'</div>';
+    }else{
+      $('dupKelas').innerHTML=names.map(function(k,i){
+        var ada=rows.some(function(x){return x.kelas===k&&x.nama_modul_ajar===r.nama_modul_ajar&&x.matapelajaran===r.matapelajaran;});
+        return '<label class="kopt"><input type="checkbox" value="'+esc(k)+'"'+(ada?' disabled':'')+'><span>'+esc(k)+(ada?'<small>sudah ada</small>':'')+'</span></label>';
+      }).join('');
+    }
+    dupSync();
+    var m=$('dupModal');m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');
+  }
+  function closeDup(){
+    var m=$('dupModal');m.classList.remove('open');m.setAttribute('aria-hidden','true');
+    if(!$('modal').classList.contains('open'))document.body.classList.remove('modal-open');
+    dupId=null;
+  }
+  $('dupKelas').addEventListener('change',dupSync);
+  $('dupAll').addEventListener('click',function(){
+    var bx=dupBoxes(),all=bx.length&&bx.every(function(x){return x.checked;});
+    bx.forEach(function(x){x.checked=!all;});dupSync();
+  });
+  $('dupClose').addEventListener('click',closeDup);
+  $('dupCancel').addEventListener('click',closeDup);
+  $('dupBack').addEventListener('click',function(){if(!busy)closeDup();});
+  $('dupFrm').addEventListener('submit',async function(ev){
+    ev.preventDefault();if(busy)return;
+    var r=rows.find(function(x){return x.id===dupId;});if(!r){closeDup();return;}
+    var pilih=dupBoxes().filter(function(x){return x.checked;}).map(function(x){return x.value;});
+    if(!pilih.length){toast('Pilih minimal satu kelas tujuan.','err');return;}
+    var data=pilih.map(function(k){return {nama_modul_ajar:r.nama_modul_ajar,matapelajaran:r.matapelajaran,kelas:k,link_modul:r.link_modul};});
+    setBusy(true);$('dupGoTxt').textContent='Menduplikat…';
+    try{
+      var res=await db.from(TABLE).insert(data);
+      if(res.error)throw res.error;
+      closeDup();
+      await load();
+      toast(data.length+' modul ajar berhasil diduplikat.','ok');
+    }catch(e){
+      toast('Gagal menduplikat: '+(e.message||e),'err');
+      dupSync();
+    }
+    setBusy(false);
+  });
+
   $('q').addEventListener('input',render);
   $('fKelas').addEventListener('change',render);
   $('bNew').addEventListener('click',function(){resetForm();openModal();});
   $('mClose').addEventListener('click',closeModal);
   $('bCancel').addEventListener('click',closeModal);
   $('mBack').addEventListener('click',function(){if(!busy)closeModal();});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('modal').classList.contains('open')&&!busy)closeModal();});
+  document.addEventListener('keydown',function(e){if(e.key!=='Escape'||busy)return;if($('dupModal').classList.contains('open'))closeDup();else if($('modal').classList.contains('open'))closeModal();});
   $('bRefresh').addEventListener('click',function(){Promise.all([(mapelP=loadMapel()),load(),loadKelas()]).then(function(a){if(a[1])toast('Data terbaru ditampilkan.','ok');});});
 
   /* ---------- Akun guru: ikut yang tampil di adminguru.html ---------- */
