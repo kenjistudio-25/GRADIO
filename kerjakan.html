@@ -28,6 +28,11 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .qmed video{max-height:360px;border-radius:12px;background:#000}
 .qmed iframe{aspect-ratio:16/9;border:0;border-radius:12px;background:#000}
 .qmed audio{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.85);box-shadow:0 0 0 .5px var(--line)}
+.qpdf{display:flex;align-items:center;gap:12px;margin:0 0 16px;padding:14px 16px;border-radius:14px;background:rgba(209,47,38,.07);box-shadow:inset 0 0 0 1.5px rgba(209,47,38,.3);color:var(--text);text-decoration:none}
+.qpdf:hover{background:rgba(209,47,38,.12)}
+.qpdf .qi{font-size:30px;flex:none}
+.qpdf b{display:block;font-size:15px;color:#b3261e}
+.qpdf small{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
 .qimg.err::after{content:'Gambar tidak dapat dimuat.';font-size:12.5px;color:var(--muted)}
 .qt{font-size:16.5px;line-height:1.55;white-space:pre-wrap;margin-bottom:16px}
 .op{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;margin-bottom:8px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--line);transition:.15s}
@@ -76,7 +81,22 @@ body.ac #qc .qt,body.ac #qc .op span{-webkit-user-select:none;user-select:none}
 .wb .bt{margin-top:18px}
 @keyframes wmf{from{opacity:0}}
 @keyframes wmp{from{opacity:0;transform:scale(.86) translateY(10px)}}
-@media (prefers-reduced-motion:reduce){.wm.show,.wb{animation:none}.wr .p{transition:none}}
+@media (prefers-reduced-motion:reduce){.wm.show,.wb{animation:none}.wr .p{transition:none}.pf.up .sp{animation:none}}
+/* Praktikum: unggah foto / video sebagai jawaban */
+.prz{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;padding:20px 14px;border-radius:14px;border:2px dashed var(--accent);background:rgba(18,160,95,.06);color:#0b7a47;font-weight:800;font-size:15px;text-align:center}
+.prz small{font-weight:500;color:var(--muted);font-size:12.5px}
+.prz:hover{background:rgba(18,160,95,.12)}
+.prz[disabled]{opacity:.5;pointer-events:none}
+.pfl{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+.pf{position:relative;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 0 0 .5px var(--line),0 2px 8px rgba(20,60,40,.1)}
+.pf img,.pf video{display:block;width:100%;height:120px;object-fit:cover;background:#000}
+.pf .pi{padding:6px 8px;font-size:11.5px;color:var(--muted);line-height:1.3}
+.pf .pi b{display:block;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+.pf .rm{position:absolute;top:6px;right:6px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.62);color:#fff;font-size:18px;line-height:1;display:grid;place-items:center}
+.pf.up{display:grid;place-items:center;min-height:170px;text-align:center;padding:10px;font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+.pf.up .sp{width:26px;height:26px;border-radius:50%;border:3px solid var(--track);border-top-color:var(--accent);animation:spn .8s linear infinite;margin:0 auto 8px}
+.pf.er{box-shadow:inset 0 0 0 2px var(--red)}.pf.er .bt{margin-top:8px;padding:6px 14px;font-size:12.5px}
+@keyframes spn{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -110,7 +130,7 @@ function msg(t,m,btn,href){app.innerHTML='<div class="card st"><h2>'+esc(t)+'</h
 
 const db=window.supabase.createClient('https://vvlngdwghdhrrnpczier.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2bG5nZHdnaGRocnJucGN6aWVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0MDI1MzgsImV4cCI6MjEwNzk3ODUzOH0.kV3y6rUu0NKbV451dvD4SkeZRJtuLNzwoA81tUY8jiA');
 const BACK='asesmen.html';
-const DESK={pg:'Pilihlah satu jawaban yang paling benar (A, B, C, atau D). Bacalah setiap pertanyaan dengan teliti.',bs:'Tentukan apakah setiap pernyataan Benar atau Salah.',essay:'Jawablah setiap pertanyaan dengan uraian yang jelas dan menggunakan bahasa sendiri.',tts:'Isilah kotak jawaban sesuai petunjuk mendatar dan menurun. Satu kotak diisi satu huruf.'};
+const DESK={pg:'Pilihlah satu jawaban yang paling benar (A, B, C, atau D). Bacalah setiap pertanyaan dengan teliti.',bs:'Tentukan apakah setiap pernyataan Benar atau Salah.',essay:'Jawablah setiap pertanyaan dengan uraian yang jelas dan menggunakan bahasa sendiri.',tts:'Isilah kotak jawaban sesuai petunjuk mendatar dan menurun. Satu kotak diisi satu huruf.',praktikum:'Kerjakan rangkaian praktik sesuai langkah pada soal, lalu unggah foto atau video hasil praktikmu sebagai jawaban.'};
 
 let sess=null,ses=null;
 try{sess=JSON.parse(sessionStorage.getItem('madani_session')||'null');ses=JSON.parse(sessionStorage.getItem('madani_asesmen')||'null');}catch(_){}
@@ -121,7 +141,7 @@ let ID={nama:'',nisn:'',kelas:'',kategori:''};
 let P,A,Q=[],st,KEY,deadline,timer,busy=false,finished=false,warned=false,wmPrev=null,wmTo=null,timeUp=false;
 
 function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(_){}}
-const answered=i=>{const a=st.ans[i];return a!==undefined&&a!==null&&(typeof a!=='string'||a.trim()!=='');};
+const answered=i=>{const a=st.ans[i];if(Array.isArray(a))return a.length>0;return a!==undefined&&a!==null&&(typeof a!=='string'||a.trim()!=='');};
 
 async function init(){
   try{
@@ -164,6 +184,7 @@ async function init(){
 
 function start(){
   $('hT').textContent=P.judul;$('hS').textContent=P.kelas+(P.materi?' · '+P.materi:'');
+  Object.keys(st.ans).forEach(k=>{const v=st.ans[k];if(Array.isArray(v)&&v.some(x=>x&&x.local)){const r=v.filter(x=>!(x&&x.local));if(r.length)st.ans[k]=r;else delete st.ans[k];}});save();
   $('tm').hidden=false;
   app.innerHTML='<div class="idn"><div><small>Nama Siswa</small><b>'+esc(ID.nama||'-')+'</b></div><div><small>NISN</small><b>'+esc(ID.nisn||'-')+'</b></div><div><small>Kelas</small><b>'+esc(ID.kelas||'-')+'</b></div><div><small>Kategori Ulangan</small><b>'+esc(ID.kategori||'-')+'</b></div></div><div class="ins">'+esc(P.deskripsi||DESK[P.bentuk]||'')+'</div>'+
     '<div class="lay"><section class="card" id="qc"></section><aside class="card nav"><h3>Daftar Soal</h3><div class="prog" id="pg"></div><div class="ng" id="ng"></div>'+
@@ -177,6 +198,9 @@ function start(){
   $('ng').onclick=e=>{const b=e.target.closest('.nb');if(b)go(+b.dataset.i);};
   $('qc').addEventListener('click',onClick);$('qc').addEventListener('input',onInput);
   $('qc').addEventListener('keydown',onKey);$('qc').addEventListener('paste',onPaste);
+  if(isPrak()){fPr=document.createElement('input');fPr.type='file';fPr.accept='image/*,video/*';fPr.multiple=true;fPr.hidden=true;document.body.appendChild(fPr);
+  fPr.addEventListener('change',()=>{pickEnd();const fs=Array.from(fPr.files||[]);fPr.value='';prAdd(fs);});
+  fPr.addEventListener('cancel',pickEnd);}
   tick();timer=setInterval(tick,1000);render();
   window.addEventListener('beforeunload',e=>{if(!finished){e.preventDefault();e.returnValue='';}});
   if(A&&A.anticheat==='aktif')antiCheat(); /* diatur lewat modal Aktifkan Soal (kolom soal_aktif.anticheat) */
@@ -193,7 +217,7 @@ function reqFs(){
   try{const p=f.call(de);if(p&&p.then)p.then(()=>{fsWanted=true;}).catch(()=>{});else fsWanted=true;}catch(_){}
 }
 function onLeave(){
-  if(finished||busy||away)return;
+  if(finished||busy||away||picking)return;
   away=true;st.viol=(+st.viol||0)+1;save();
 }
 function onBack(){
@@ -243,9 +267,9 @@ function antiCheat(){
 }
 
 function go(i){if(i<0||i>=Q.length)return;st.cur=i;save();render();window.scrollTo({top:0,behavior:'smooth'});}
-function lbl(q){return q.tipe==='pg'?'Pilihan Ganda':q.tipe==='bs'?'Benar / Salah':q.tipe==='tts'?(q.arah==='menurun'?'Menurun':'Mendatar'):'Uraian';}
+function lbl(q){return q.tipe==='praktikum'?'Praktikum':q.tipe==='pg'?'Pilihan Ganda':q.tipe==='bs'?'Benar / Salah':q.tipe==='tts'?(q.arah==='menurun'?'Menurun':'Mendatar'):'Uraian';}
 let mediaIdx=-1;
-const RX_VID=/\.(mp4|webm|mov|m4v|ogv|mkv)$/i,RX_AUD=/\.(mp3|m4a|wav|ogg|oga|aac|opus|flac)$/i,RX_IMG=/\.(jpe?g|png|gif|webp|svg|bmp|avif)$/i;
+const RX_VID=/\.(mp4|webm|mov|m4v|ogv|mkv)$/i,RX_AUD=/\.(mp3|m4a|wav|ogg|oga|aac|opus|flac)$/i,RX_IMG=/\.(jpe?g|png|gif|webp|svg|bmp|avif)$/i,RX_PDF=/\.pdf$/i;
 function driveId(u){const m=String(u||'').match(/drive\.google\.com\/(?:file\/d\/|open\?(?:[^#]*&)?id=|uc\?(?:[^#]*&)?id=)([\w-]+)/i);return m?m[1]:'';}
 function embedUrl(u){
   u=String(u||'');const m=u.match(/(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/i);
@@ -285,11 +309,12 @@ async function initDrive(root){
 function mediaKind(u){
   if(!u)return '';if(driveId(u))return 'drive';if(embedUrl(u))return 'embed';
   const p=String(u).split('?')[0].split('#')[0];
-  return RX_VID.test(p)?'video':RX_AUD.test(p)?'audio':RX_IMG.test(p)?'image':'media';
+  return RX_VID.test(p)?'video':RX_AUD.test(p)?'audio':RX_IMG.test(p)?'image':RX_PDF.test(p)?'pdf':'media';
 }
 function mediaHtml(q,i){
   const u=esc(q.gambar),k=mediaKind(q.gambar);
   if(k==='drive'){const id=driveId(q.gambar);return '<div class="drv" data-id="'+id+'" data-v="'+(/#video\b/i.test(String(q.gambar))?1:0)+'"></div>';}
+  if(k==='pdf')return '<a class="qpdf" href="'+u+'" target="_blank" rel="noopener"><span class="qi">📄</span><span><b>Buka File PDF Jobdesk Praktikum</b><small>Terbuka di tab baru. Setelah selesai membaca, kembali ke halaman ini untuk mengunggah hasil praktikmu.</small></span></a>';
   if(k==='embed')return '<iframe src="'+esc(embedUrl(q.gambar))+'" title="Video soal nomor '+(i+1)+'" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>';
   if(k==='audio')return '<audio src="'+u+'" controls preload="metadata" controlsList="nodownload" onerror="this.insertAdjacentHTML(\'afterend\',\'<p class=&quot;hint&quot;>Audio tidak dapat dimuat.</p>\');this.remove()"></audio>';
   if(k==='video'||k==='media')return '<video src="'+u+'" controls playsinline preload="metadata" controlsList="nodownload" onerror="this.insertAdjacentHTML(\'afterend\',\'<p class=&quot;hint&quot;>Video/audio tidak dapat dimuat.</p>\');this.remove()"></video>';
@@ -305,7 +330,8 @@ function render(){
     const n=letters(q.jawaban).length,v=String(a||'').padEnd(n,' ');
     h+='<div class="cells">';for(let k=0;k<n;k++)h+='<input class="cell" data-k="'+k+'" maxlength="1" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Huruf '+(k+1)+'" value="'+esc(v.charAt(k).trim())+'">';
     h+='</div><p class="hint">'+n+' huruf · '+(q.arah==='menurun'?'menurun':'mendatar')+'</p>';
-  }else h+='<textarea maxlength="5000" placeholder="Tulis jawabanmu di sini…" aria-label="Jawaban">'+esc(a||'')+'</textarea><p class="hint" id="cc">'+String(a||'').length+' karakter</p>';
+  }else if(q.tipe==='praktikum')h+=prHtml(i);
+  else h+='<textarea maxlength="5000" placeholder="Tulis jawabanmu di sini…" aria-label="Jawaban">'+esc(a||'')+'</textarea><p class="hint" id="cc">'+String(a||'').length+' karakter</p>';
   /* Media soal (gambar / MP3 / video) berada di wadah sendiri #qmed dan hanya dibuat ulang saat pindah nomor,
      supaya pemutaran tidak terputus ketika siswa memilih jawaban. Semua diputar di halaman ini (tanpa tab baru). */
   const root=$('qc');
@@ -323,6 +349,8 @@ function upd(){
   $('bN').textContent=st.cur===n-1?'Selesai ✓':'Berikutnya ›';
 }
 function onClick(e){
+  if(e.target.closest('.qpdf')){pickStart();return;}
+  const pb=e.target.closest('[data-pr]');if(pb)return prClick(pb);
   const b=e.target.closest('.op');if(!b)return;
   const q=Q[st.cur],v=b.dataset.v,val=q.tipe==='bs'?v==='1':+v;
   if(st.ans[st.cur]===val)delete st.ans[st.cur];else st.ans[st.cur]=val;
@@ -354,6 +382,126 @@ function onPaste(e){
   setTts();
 }
 
+/* ---------- Praktikum: foto / video sebagai jawaban ----------
+   Berkas dipilih & disimpan sementara di browser. Upload ke folder Google Drive baru dilakukan saat tombol Kirim Jawaban ditekan
+   (lewat Google Apps Script, lihat drive-upload.gs). Link file di Drive disimpan di hasil_asesmen.jawaban (kolom jawab: [{u,id,t,n,s}]). */
+const DRIVE_UPLOAD_URL='https://script.google.com/macros/s/AKfycbweW4BqRMvfVTK2JIwF3OT4lAuIymTuKfIn_KPkZW93uJj_G4v5YEfXcurOtnxD-Rh-FA/exec'; /* https://script.google.com/macros/s/XXXX/exec */
+const PR_MAX_FILES=5,PR_MAX_VIDEO=10*1024*1024,PR_MAX_IMG=2*1024*1024;
+const loc={}; /* id berkas lokal -> {blob,url} (tidak disimpan di localStorage) */
+const upl={},pending=new Set();
+let fPr=null,prSeq=0,picking=false,pickTo=null;
+const fmtSize=n=>n>=1048576?(n/1048576).toFixed(1)+' MB':Math.max(1,Math.round(n/1024))+' KB';
+/* Membuka kamera/galeri membuat halaman kehilangan fokus: jangan dihitung sebagai pelanggaran */
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&picking)pickEnd();});
+window.addEventListener('focus',()=>{if(picking)pickEnd();});
+const isPrak=()=>!!(P&&P.bentuk==='praktikum');
+/* Toleransi (buka PDF jobdesk / kamera / galeri) hanya berlaku di paket bentuk praktikum; bentuk lain tetap dihitung pelanggaran */
+function pickStart(){if(!isPrak())return;picking=true;clearTimeout(pickTo);pickTo=setTimeout(()=>{picking=false;},180000);}
+function pickEnd(){clearTimeout(pickTo);pickTo=setTimeout(()=>{picking=false;if(acOn&&!fsEl())reqFs();},1500);}
+function prSrc(f){return f.local?(loc[f.id]&&loc[f.id].url)||'':f.u;}
+function prCard(f,k){
+  const src=prSrc(f);
+  const m=!src?'<div class="sp"></div>':f.t==='video'?'<video src="'+esc(src)+'" controls playsinline preload="metadata"></video>':'<img src="'+esc(src)+'" alt="Hasil praktik '+(k+1)+'" loading="lazy">';
+  return '<div class="pf">'+m+'<button type="button" class="rm" data-pr="rm" data-k="'+k+'" aria-label="Hapus berkas '+(k+1)+'">×</button><div class="pi"><b>'+esc(f.n||'berkas')+'</b>'+fmtSize(f.s||0)+'</div></div>';
+}
+function prHtml(i){
+  const a=Array.isArray(st.ans[i])?st.ans[i]:[],u=upl[i]||[],full=a.length+u.filter(x=>!x.err).length>=PR_MAX_FILES;
+  return '<button type="button" class="prz" data-pr="add"'+(full?' disabled':'')+'><span>📤 Pilih Foto / Video Praktik</span><small>Foto (JPG/PNG, maks '+fmtSize(PR_MAX_IMG)+') atau video (MP4/MOV/WEBM, maks '+fmtSize(PR_MAX_VIDEO)+') · maks '+PR_MAX_FILES+' berkas</small></button>'+
+    '<div class="pfl">'+a.map(prCard).join('')+u.map(x=>x.err
+      ?'<div class="pf up er"><div>⚠️ '+esc(x.n)+'<br>'+esc(x.err)+'<br><button type="button" class="bt" data-pr="dis" data-id="'+x.id+'">Tutup</button></div></div>'
+      :'<div class="pf up"><div><div class="sp"></div>Memproses…<br>'+esc(x.n)+'</div></div>').join('')+'</div>'+
+    '<p class="hint">'+a.length+' berkas dipilih. Berkas baru diunggah ke Google Drive saat kamu menekan Kirim Jawaban; sebelum itu masih bisa dihapus atau diganti. Jangan refresh/tutup halaman, karena berkas yang belum terkirim akan hilang.</p>';
+}
+function prDrop(f){if(f&&f.local&&loc[f.id]){try{URL.revokeObjectURL(loc[f.id].url);}catch(_){}delete loc[f.id];}}
+function prClick(b){
+  const act=b.dataset.pr,i=st.cur;
+  if(act==='add'){pickStart();if(fPr){fPr.value='';fPr.click();}}
+  else if(act==='rm'){
+    const a=Array.isArray(st.ans[i])?st.ans[i]:[],f=a[+b.dataset.k];if(!f)return;
+    a.splice(+b.dataset.k,1);if(a.length)st.ans[i]=a;else delete st.ans[i];
+    prDrop(f);save();render();
+  }else if(act==='dis'){upl[i]=(upl[i]||[]).filter(x=>String(x.id)!==b.dataset.id);render();}
+}
+function prCompress(f){
+  return new Promise(res=>{
+    if(f.size<=350*1024&&/^image\/(jpeg|png|webp)$/i.test(f.type)){res(null);return;}
+    const url=URL.createObjectURL(f),im=new Image();
+    im.onload=()=>{
+      try{
+        const k=Math.min(1,1600/Math.max(im.naturalWidth,im.naturalHeight)),w=Math.max(1,Math.round(im.naturalWidth*k)),h=Math.max(1,Math.round(im.naturalHeight*k));
+        const c=document.createElement('canvas');c.width=w;c.height=h;
+        const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+        c.toBlob(b=>{URL.revokeObjectURL(url);res(b&&b.size<f.size?b:null);},'image/jpeg',.82);
+      }catch(_){URL.revokeObjectURL(url);res(null);}
+    };
+    im.onerror=()=>{URL.revokeObjectURL(url);res(null);};
+    im.src=url;
+  });
+}
+async function prStage(i,q,f,t,item){
+  try{
+    let blob=f,ext=((f.name||'').match(/\.([a-z0-9]{2,5})$/i)||[])[1]||(t==='video'?'mp4':'jpg'),ct=f.type||(t==='video'?'video/mp4':'image/jpeg');
+    if(t==='image'){const c=await prCompress(f);if(c){blob=c;ext='jpg';ct='image/jpeg';}}
+    const lim=t==='video'?PR_MAX_VIDEO:PR_MAX_IMG;
+    if(blob.size>lim)throw new Error('Ukuran berkas terlalu besar (maks '+fmtSize(lim)+').');
+    const id='L'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+    loc[id]={blob:blob,url:URL.createObjectURL(blob),ct:ct};
+    const a=Array.isArray(st.ans[i])?st.ans[i]:[];
+    a.push({local:1,id:id,t:t,n:f.name||('berkas.'+ext),s:blob.size});
+    st.ans[i]=a;save();
+    upl[i]=(upl[i]||[]).filter(x=>x.id!==item.id);
+  }catch(e){item.err=(e&&e.message)||String(e);}
+  if(busy||finished)return;
+  if(st.cur===i)render();else upd();
+}
+/* kirim satu berkas lokal ke Google Drive lewat Apps Script; mengembalikan {id,url} */
+function blobB64(b){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]||'');r.onerror=()=>rej(new Error('Gagal membaca berkas.'));r.readAsDataURL(b);});}
+async function driveUpload(f,q){
+  if(!/^https:\/\/script\.google\.com\//.test(DRIVE_UPLOAD_URL))throw new Error('Alamat upload Google Drive belum diatur. Hubungi gurumu.');
+  const L=loc[f.id];if(!L)throw new Error('Berkas "'+(f.n||'')+'" hilang dari browser. Pilih ulang berkasnya.');
+  const sf=v=>String(v==null?'':v).replace(/[^\w\-. ]/g,'_').trim();
+  const ext=((f.n||'').match(/\.([a-z0-9]{2,5})$/i)||[])[1]||(f.t==='video'?'mp4':'jpg');
+  const name=[sf(ID.kelas),sf(ID.nama),sf(ID.nisn),'soal'+sf(q.nomor),Date.now().toString(36)].filter(Boolean).join('_')+'.'+ext.toLowerCase().replace(/[^a-z0-9]/g,'');
+  const body=JSON.stringify({name:name,mime:L.ct||L.blob.type||'application/octet-stream',data:await blobB64(L.blob)});
+  const r=await fetch(DRIVE_UPLOAD_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:body,redirect:'follow'});
+  const j=await r.json().catch(()=>null);
+  if(!j||!j.ok)throw new Error((j&&j.error)||'Upload ke Google Drive gagal.');
+  return {id:j.id,url:j.url};
+}
+/* unggah semua berkas lokal sebelum jawaban disimpan; mengembalikan true jika semua sukses */
+async function uploadAll(setMsg){
+  const todo=[];
+  Q.forEach((q,i)=>{if(q.tipe!=='praktikum')return;(Array.isArray(st.ans[i])?st.ans[i]:[]).forEach(f=>{if(f&&f.local)todo.push([i,q,f]);});});
+  for(let n=0;n<todo.length;n++){
+    const [i,q,f]=todo[n];
+    setMsg('Mengunggah berkas '+(n+1)+' dari '+todo.length+' ke Google Drive…');
+    const r=await driveUpload(f,q);
+    const a=st.ans[i],k=a.indexOf(f);
+    const nf={u:r.url,id:r.id,t:f.t,n:f.n,s:f.s};
+    if(k>=0)a[k]=nf;
+    prDrop(f);save();
+  }
+  return todo.length;
+}
+function prAdd(files){
+  if(!files.length)return;
+  const i=st.cur,q=Q[i],a=Array.isArray(st.ans[i])?st.ans[i]:[];
+  upl[i]=upl[i]||[];
+  const room=PR_MAX_FILES-a.length-upl[i].filter(x=>!x.err).length;
+  if(room<=0){toast('Maksimal '+PR_MAX_FILES+' berkas untuk soal ini.');return;}
+  if(files.length>room){toast('Hanya '+room+' berkas pertama yang dipilih (maks '+PR_MAX_FILES+' berkas).');files=files.slice(0,room);}
+  files.forEach(f=>{
+    const nm=f.name||'berkas';
+    const t=/^video\//i.test(f.type)||RX_VID.test(nm)?'video':/^image\//i.test(f.type)||RX_IMG.test(nm)?'image':'';
+    if(!t){toast('"'+nm+'" bukan foto atau video.');return;}
+    if(t==='video'&&f.size>PR_MAX_VIDEO){toast('Video "'+nm+'" lebih dari '+fmtSize(PR_MAX_VIDEO)+'. Perpendek video atau turunkan resolusinya.');return;}
+    const item={id:++prSeq,n:nm,err:''};
+    upl[i].push(item);
+    const p=prStage(i,q,f,t,item);pending.add(p);p.then(()=>pending.delete(p));
+  });
+  render();
+}
+
 function showWarn(){
   if(warned)return;warned=true;
   wmPrev=document.activeElement;
@@ -377,6 +525,7 @@ function tick(){
   if(r<=60000){showWarn();$('wmN').textContent=Math.ceil(r/1000);$('wmP').style.strokeDashoffset=(301.6*(1-r/60000)).toFixed(1);}
 }
 function ask(){
+  if(pending.size){toast('Masih ada berkas yang sedang diunggah. Tunggu sampai selesai.');return;}
   const k=Q.filter((_,i)=>!answered(i)).length,f=Object.keys(st.flag).filter(i=>st.flag[i]).length;
   let t='Kirim jawaban sekarang?';
   if(k)t='Masih ada '+k+' soal yang belum dijawab.\n'+t;
@@ -448,6 +597,14 @@ async function submit(){
   if(busy||finished)return;busy=true;clearInterval(timer);hideWarn();hideCheat();
   app.innerHTML='<div class="card st"><h2>'+(timeUp?'Waktu habis':'Mengirim jawaban…')+'</h2><p>'+(timeUp?'Jawaban yang sudah kamu isi sedang dikirim. Jangan tutup halaman ini.':'Jangan tutup halaman ini.')+'</p></div>';
   $('tm').hidden=true;document.querySelector('.bar')&&document.querySelector('.bar').remove();
+  if(pending.size){await Promise.race([Promise.all(Array.from(pending)),new Promise(r=>setTimeout(r,60000))]);}
+  try{
+    await uploadAll(t=>{const p=app.querySelector('.st p');if(p)p.textContent=t+' Jangan tutup halaman ini.';});
+  }catch(e){
+    busy=false;
+    app.innerHTML='<div class="card st"><h2>Gagal mengunggah berkas</h2><p>'+esc((e&&e.message)||String(e))+'</p><p class="hint">Berkas yang sudah terunggah tidak akan diunggah ulang.</p><button class="bt pri" id="rt" type="button">Coba kirim lagi</button></div>';
+    $('rt').onclick=submit;return;
+  }
   let skor=null,maks=0,essay=false,benar=0;
   try{
     const rk=await db.from('butir_soal').select('nomor,tipe,skor,kunci_pg,kunci_bs,jawaban').eq('paket_id',pid).range(0,999);
@@ -455,7 +612,7 @@ async function submit(){
     const K={};rk.data.forEach(r=>K[r.nomor]=r);skor=0;
     Q.forEach((q,i)=>{
       const k=K[q.nomor]||{},a=st.ans[i];
-      if(q.tipe==='essay'){essay=true;return;}
+      if(q.tipe==='essay'||q.tipe==='praktikum'){essay=true;return;}
       maks+=+q.skor||0;
       const ok=q.tipe==='pg'?a===k.kunci_pg:q.tipe==='bs'?a===k.kunci_bs:(letters(a).length>0&&letters(a)===letters(k.jawaban));
       if(ok){skor+=+q.skor||0;benar++;}
@@ -486,11 +643,12 @@ function done(r,already,saved,nl){
   finished=true;hideCheat();document.body.classList.remove('ac');
   try{if(fsEl())(document.exitFullscreen||document.webkitExitFullscreen).call(document);}catch(_){}
   $('tm').hidden=true;const bar=document.querySelector('.bar');if(bar)bar.remove();
+  const kor=P&&P.bentuk==='praktikum'?'Hasil praktikmu akan dinilai oleh gurumu.':'Soal uraian akan dinilai oleh gurumu.';
   let h='<div class="card st"><h2>'+(already?'Kamu sudah mengerjakan asesmen ini':'Jawaban terkirim ✓')+'</h2>';
   if(SHOW_NILAI&&r.nilai!=null){
     h+='<div class="big">'+r.nilai+'</div><p>Skor '+r.skor_otomatis+' dari '+r.skor_maks+(P&&P.kkm!=null?' · KKM '+P.kkm:'')+'</p>';
-    if(r.perlu_koreksi)h+='<p style="margin-top:6px">Nilai sementara. Soal uraian akan dinilai oleh gurumu.</p>';
-  }else if(r.perlu_koreksi)h+='<p>Soal uraian akan dinilai oleh gurumu.</p>';
+    if(r.perlu_koreksi)h+='<p style="margin-top:6px">Nilai sementara. '+kor+'</p>';
+  }else if(r.perlu_koreksi)h+='<p>'+kor+'</p>';
   else h+='<p>Terima kasih. Hasilmu akan disampaikan oleh gurumu.</p>';
   if(saved===false)h+='<p style="color:var(--red);margin-top:10px">Tabel hasil_asesmen (atau kolom nisn/kategori) belum ada di Supabase, jadi jawaban belum tersimpan di server. Jangan hapus data browser dan hubungi gurumu.</p>';
   if(nl&&!nl.ok)h+='<p style="color:var(--red);margin-top:10px">Jawabanmu sudah terkirim, tetapi nilai belum masuk ke tabel nilai kelas: '+esc(nl.msg)+' Hubungi gurumu.</p>';
