@@ -372,6 +372,8 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
 .gbox .gb{display:flex;gap:2px;flex:none}
 .pimg{display:block;max-width:100%;max-height:280px;margin:10px 0 2px;border-radius:10px;border:1px solid var(--line);background:#fff}
 .paud{display:block;width:100%;margin:10px 0 2px}
+.ppdf{display:inline-flex;align-items:center;gap:8px;margin:10px 0 2px;padding:10px 14px;border-radius:10px;background:rgba(220,38,38,.08);color:#b91c1c;font-weight:700;font-size:13.5px;text-decoration:none;box-shadow:inset 0 0 0 1px rgba(220,38,38,.25)}
+.ppdf:hover{background:rgba(220,38,38,.14)}
 .pemb{display:block;width:100%;aspect-ratio:16/9;max-height:320px;margin:10px 0 2px;border:1px solid var(--line);border-radius:10px;background:#000}
 .atp{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .abtn{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:10px;background:var(--track);color:var(--text);font-size:13px;font-weight:600}
@@ -472,6 +474,14 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
 .kans{margin-top:8px;padding:10px 12px;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:13.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
 .kans em{display:block;font-style:normal;font-weight:800;color:#b45309;font-size:12px;margin-bottom:4px}
 .kans.nil{color:var(--muted)}
+.kmed{margin-top:8px;padding:10px 12px;border-radius:10px;background:#fff;border:1px solid var(--line)}
+.kmed>em{display:block;font-style:normal;font-weight:800;color:#b45309;font-size:12px;margin-bottom:8px}
+.kmg{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.kmg figure{margin:0}
+.kmg img,.kmg video{display:block;width:100%;max-height:220px;object-fit:cover;border-radius:10px;background:#000}
+.kmg iframe{display:block;width:100%;height:200px;border:0;border-radius:10px;background:#000}
+.kmg figcaption a{color:inherit;font-weight:700}
+.kmg figcaption{margin-top:4px;font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sin{flex:none;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--muted)}
 .sin input{width:72px;padding:6px 8px;border-radius:10px;border:1.5px solid var(--accent);background:#fff;font:inherit;font-size:15px;font-weight:800;text-align:right;color:var(--text)}
 .sin input:focus{outline:3px solid rgba(74,166,230,.3);outline-offset:1px}
@@ -659,7 +669,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
       <div class="tools">
         <select id="fKelas" aria-label="Filter kelas"><option value="">Semua kelas</option></select>
         <select id="fBentuk" aria-label="Filter bentuk soal">
-          <option value="">Semua bentuk</option><option value="pg">Pilihan Ganda</option><option value="essay">Essay</option><option value="tts">Teka Teki Silang</option><option value="bs">Benar Salah</option>
+          <option value="">Semua bentuk</option><option value="pg">Pilihan Ganda</option><option value="essay">Essay</option><option value="tts">Teka Teki Silang</option><option value="bs">Benar Salah</option><option value="praktikum">Praktikum</option>
         </select>
         <select id="fKat" aria-label="Filter kategori penilaian">
           <option value="">Semua kategori</option><option value="UH">Ulangan Harian</option><option value="UTS">UTS</option><option value="UAS">UAS</option>
@@ -684,6 +694,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
       <button class="tp" type="button" data-type="pg"><span class="tpi" style="background:linear-gradient(160deg,#2fd283,#0b7a47)" data-i="pg"></span><b>Pilihan Ganda</b><small>Satu pertanyaan dengan empat pilihan jawaban (A–D).</small></button>
       <button class="tp" type="button" data-type="tts"><span class="tpi" style="background:linear-gradient(160deg,#a78bfa,#6d28d9)" data-i="tts"></span><b>Teka Teki Silang</b><small>Petunjuk mendatar dan menurun dengan jawaban berupa kata.</small></button>
       <button class="tp" type="button" data-type="bs"><span class="tpi" style="background:linear-gradient(160deg,#60a5fa,#1d4ed8)" data-i="bs"></span><b>Benar Salah</b><small>Pernyataan yang dinilai siswa benar atau salah.</small></button>
+      <button class="tp" type="button" data-type="praktikum"><span class="tpi" style="background:linear-gradient(160deg,#2dd4bf,#0f766e)" data-i="praktikum"></span><b>Praktikum</b><small>Rangkaian pekerjaan praktik; siswa mengunggah foto atau video hasilnya.</small></button>
     </div>
   </div>
 </div>
@@ -806,7 +817,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
       <div class="stats"><span class="chip" id="hCnt">0 pengerjaan</span><span class="chip" id="hSis">0 siswa</span><span class="chip" id="hAvg">Rata-rata —</span></div>
       <div class="tools">
         <select id="hKelas" aria-label="Filter kelas"><option value="">Semua kelas</option></select>
-        <select id="hStat" aria-label="Filter status"><option value="">Semua status</option><option value="t">Tuntas</option><option value="b">Belum tuntas</option><option value="k">Perlu koreksi</option></select>
+        <select id="hStat" aria-label="Filter status"><option value="">Semua status</option><option value="t">Tuntas</option><option value="b">Belum tuntas</option><option value="k">Perlu koreksi</option><option value="x">Belum mengerjakan</option></select>
         <div class="fld search"><input id="hq" type="search" placeholder="Cari siswa…" aria-label="Cari riwayat"></div>
       </div>
     </div>
@@ -877,6 +888,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     pg:'<path d="M4 7l1.8 1.8L9 5.5M4 17l1.8 1.8L9 15.5M13 7h7M13 17h7"/>',
     tts:'<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M9.5 3.5v17M14.5 3.5v17M3.5 9.5h17M3.5 14.5h17"/>',
     bs:'<path d="M3.5 8l2.5 2.5L10.5 5M13.5 14l6 6M19.5 14l-6 6"/>',
+    praktikum:'<path d="M9 3h6M10 3v6.2L4.8 18a2 2 0 001.7 3h11a2 2 0 001.7-3L14 9.2V3M7.5 15h9"/>',
     download:'<path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/>',
     upload:'<path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 19.5h14"/>',
     info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
@@ -890,9 +902,9 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
 
   var $=function(id){return document.getElementById(id);};
   var KAT={UH:'Ulangan Harian',UTS:'UTS',UAS:'UAS'};
-  var GRAD={essay:'linear-gradient(160deg,#fb923c,#c2410c)',pg:'linear-gradient(160deg,#2fd283,#0b7a47)',tts:'linear-gradient(160deg,#a78bfa,#6d28d9)',bs:'linear-gradient(160deg,#60a5fa,#1d4ed8)'};
-  var BENTUK={essay:'Essay',pg:'Pilihan Ganda',tts:'Teka Teki Silang',bs:'Benar Salah'};
-  var ICON={essay:'essay',pg:'pg',tts:'tts',bs:'bs'};
+  var GRAD={essay:'linear-gradient(160deg,#fb923c,#c2410c)',pg:'linear-gradient(160deg,#2fd283,#0b7a47)',tts:'linear-gradient(160deg,#a78bfa,#6d28d9)',bs:'linear-gradient(160deg,#60a5fa,#1d4ed8)',praktikum:'linear-gradient(160deg,#2dd4bf,#0f766e)'};
+  var BENTUK={essay:'Essay',pg:'Pilihan Ganda',tts:'Teka Teki Silang',bs:'Benar Salah',praktikum:'Praktikum'};
+  var ICON={essay:'essay',pg:'pg',tts:'tts',bs:'bs',praktikum:'praktikum'};
   var KELAS=['VII A','VII B','VIII A','VIII B','IX A','IX B'];
   var MATERI={};
   var KKTP=75;
@@ -1084,6 +1096,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     if(r.tipe==='pg')return {tipe:'pg',teks:r.teks,opsi:Array.isArray(r.opsi)?r.opsi.slice():['','','',''],kunci:r.kunci_pg,skor:r.skor};
     if(r.tipe==='bs')return {tipe:'bs',teks:r.teks,kunci:r.kunci_bs===true,skor:r.skor};
     if(r.tipe==='tts')return {tipe:'tts',teks:r.teks,jawaban:r.jawaban||'',arah:r.arah||'mendatar',skor:r.skor};
+    if(r.tipe==='praktikum')return {tipe:'praktikum',teks:r.teks,kunci:r.pedoman||'',skor:r.skor};
     return {tipe:'essay',teks:r.teks,kunci:r.pedoman||'',skor:r.skor};
   }
   async function fetchAll(table,order){
@@ -1133,9 +1146,9 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
   /* Audio listening (MP3) disimpan di bucket terpisah "file_listening", maksimal 1 MB */
   var BUCKET_AUD='file_listening';
   /* Lampiran soal (satu per soal, tersimpan di kolom gambar): gambar (dikompres), video, atau audio MP3 */
-  var VID_MAX=25*1024*1024,AUD_MAX=1024*1024;
+  var VID_MAX=25*1024*1024,AUD_MAX=1024*1024,PDF_MAX=10*1024*1024;
   var RX_VID=/\.(mp4|webm|mov|m4v|ogv|mkv)$/i,RX_AUD=/\.(mp3|m4a|wav|ogg|oga|aac|opus|flac)$/i;
-  var RX_IMG=/\.(jpe?g|png|gif|webp|svg|bmp|avif)$/i;
+  var RX_IMG=/\.(jpe?g|png|gif|webp|svg|bmp|avif)$/i,RX_PDF=/\.pdf$/i;
   /* Tautan YouTube / Google Drive -> URL embed (iframe) */
   function embedUrl(u){
     u=String(u||'');var m;
@@ -1150,12 +1163,13 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     if(!u)return '';
     if(embedUrl(u))return 'embed';
     var p=String(u).split('?')[0].split('#')[0];
-    return RX_VID.test(p)?'video':RX_AUD.test(p)?'audio':RX_IMG.test(p)?'image':'media';
+    return RX_VID.test(p)?'video':RX_AUD.test(p)?'audio':RX_IMG.test(p)?'image':RX_PDF.test(p)?'pdf':'media';
   }
   function isLink(u){return !!u&&String(u).indexOf('/storage/v1/')<0;}
   function fileKind(f){
     var t=String(f.type||''),n=String(f.name||'');
     if(/^image\//.test(t))return 'image';
+    if(t==='application/pdf'||RX_PDF.test(n))return 'pdf';
     if(/^video\//.test(t)||RX_VID.test(n))return 'video';
     if(/^audio\//.test(t)||RX_AUD.test(n))return 'audio';
     return '';
@@ -1168,6 +1182,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     if(k==='video')return '<video class="pimg" src="'+u+'" controls preload="metadata" playsinline></video>';
     if(k==='audio')return '<audio class="paud" src="'+u+'" controls preload="metadata"></audio>';
     if(k==='embed')return '<iframe class="pemb" src="'+esc(embedUrl(s.gambar))+'" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>';
+    if(k==='pdf')return '<a class="ppdf" href="'+u+'" target="_blank" rel="noopener">📄 Buka File PDF Jobdesk</a>';
     if(k==='media')return '<video class="pimg" src="'+u+'" controls preload="metadata" playsinline></video>';
     return '<img class="pimg" src="'+u+'" alt="Gambar soal '+(i+1)+'" loading="lazy">';
   }
@@ -1557,7 +1572,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
       if(s.tipe==='pg')h+=s.opsi.map(function(o,j){return '<div class="po'+(j===s.kunci?' ok':'')+'"><b>'+'ABCD'.charAt(j)+'</b><span>'+esc(o)+'</span></div>';}).join('');
       else if(s.tipe==='bs')h+='<div class="po'+(s.kunci===true?' ok':'')+'"><b>B</b><span>Benar</span></div><div class="po'+(s.kunci===false?' ok':'')+'"><b>S</b><span>Salah</span></div>';
       else if(s.tipe==='tts')h+='<div class="cells" aria-label="Jawaban: '+esc(s.jawaban)+'">'+String(s.jawaban||'').split('').map(function(c){return '<i>'+esc(c)+'</i>';}).join('')+'</div>';
-      else h+='<div class="pkey"><em>Pedoman jawaban:</em> '+esc(s.kunci||'—')+'</div>';
+      else h+='<div class="pkey"><em>'+(s.tipe==='praktikum'?'Pedoman penilaian':'Pedoman jawaban')+':</em> '+esc(s.kunci||'—')+'</div>'+(s.tipe==='praktikum'?'<div class="pkey"><em>Jawaban siswa:</em> unggah foto / video hasil praktik</div>':'');
       return h+'</div>';
     }).join('')||'<div class="noq">Paket ini belum memiliki butir soal.</div>';
     openSheet('shPrev');
@@ -1761,6 +1776,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     pg:{sub:'Tulis pertanyaan dan empat pilihan jawaban, lalu tandai jawaban yang benar.',title:'Butir Soal Pilihan Ganda',add:'Tambah soal pilihan ganda',desk:'Pilihlah satu jawaban yang paling benar dengan menandai salah satu pilihan A, B, C, atau D. Bacalah setiap pertanyaan dengan teliti dan kerjakan dengan jujur.'},
     bs:{sub:'Tulis pernyataan, lalu tentukan apakah pernyataan itu benar atau salah.',title:'Pernyataan Benar Salah',add:'Tambah pernyataan',desk:'Bacalah setiap pernyataan dengan cermat, lalu tentukan apakah pernyataan tersebut Benar atau Salah. Pilih satu jawaban untuk setiap pernyataan dan kerjakan dengan jujur.'},
     essay:{sub:'Tulis pertanyaan uraian beserta pedoman jawaban untuk penilaian guru.',title:'Butir Soal Essay',add:'Tambah soal essay',desk:'Jawablah setiap pertanyaan dengan uraian yang jelas, lengkap, dan menggunakan bahasa sendiri. Kerjakan secara mandiri dan jujur.'},
+    praktikum:{sub:'Tulis satu uraian jobdesk praktikum (ketik langsung dan/atau unggah file PDF). Siswa menjawab dengan mengunggah foto atau video hasil praktik.',title:'Jobdesk Praktikum',add:'Tambah tugas praktikum',desk:'Kerjakan rangkaian praktik sesuai langkah pada soal, dokumentasikan hasilnya dengan foto atau video yang jelas, lalu unggah sebagai jawaban. Kerjakan secara mandiri dan jujur.'},
     tts:{sub:'Tulis petunjuk dan jawaban berupa satu kata, lalu pilih arahnya (mendatar atau menurun).',title:'Pertanyaan Teka Teki Silang',add:'Tambah pertanyaan',desk:'Isilah kotak jawaban sesuai petunjuk mendatar dan menurun. Setiap jawaban berupa satu kata dan setiap kotak diisi satu huruf. Kerjakan dengan teliti dan jujur.'}
   };
   var newTipe=null;
@@ -1768,6 +1784,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     if(t==='pg')return {tipe:'pg',teks:'',opsi:['','','',''],kunci:null,skor:10};
     if(t==='bs')return {tipe:'bs',teks:'',kunci:null,skor:10};
     if(t==='tts')return {tipe:'tts',teks:'',jawaban:'',arah:'mendatar',skor:10};
+    if(t==='praktikum')return {tipe:'praktikum',teks:'',kunci:'',skor:20};
     return {tipe:'essay',teks:'',kunci:'',skor:20};
   }
   function openNew(id,tipe){
@@ -1799,6 +1816,9 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     $('newSub').textContent=CFG[newTipe].sub;
     $('qTitle').textContent=CFG[newTipe].title;
     $('bAddTxt').textContent=CFG[newTipe].add;
+    var onePr=newTipe==='praktikum';   /* Praktikum: hanya 1 jobdesk, tanpa tambah butir / template / import */
+    $('bAddQ').style.display=onePr?'none':'';$('bTpl').style.display=onePr?'none':'';$('bImp').style.display=onePr?'none':'';
+    if(onePr){draft=draft.slice(0,1);if(draft[0]&&!draft[0].gambar)draft[0]._ui='menu';}
     $('nBack').hidden=!!p;
     $('nSaveTxt').textContent=p?'Perbarui':'Simpan';
     renderDraft();
@@ -1811,10 +1831,10 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
 
   function gbrHtml(s,i){
     var src=s._prev||s.gambar;if(!src)return '';
-    var k=kindOf(s),u=esc(src),lbl=k==='video'?'Video soal':k==='audio'?'Audio soal':(k==='embed'||k==='media')?'Video / Audio (tautan)':'Gambar soal';
+    var k=kindOf(s),u=esc(src),lbl=k==='pdf'?'File PDF jobdesk':k==='video'?'Video soal':k==='audio'?'Audio soal':(k==='embed'||k==='media')?'Video / Audio (tautan)':'Gambar soal';
     var info=s._blob?fmtSize(s._blob.size)+' · tersimpan saat soal disimpan':(isLink(s.gambar)?'<span class="glink">'+esc(s.gambar)+'</span>':'Sudah tersimpan');
-    var thumb=(k==='video'||k==='media')?'<video src="'+u+'" controls preload="metadata" playsinline></video>':(k==='audio'||k==='embed')?'':'<img src="'+u+'" alt="Gambar soal '+(i+1)+'">';
-    var aud=k==='audio'?'<audio src="'+u+'" controls preload="metadata"></audio>':'';
+    var thumb=(k==='video'||k==='media')?'<video src="'+u+'" controls preload="metadata" playsinline></video>':(k==='audio'||k==='embed'||k==='pdf')?'':'<img src="'+u+'" alt="Gambar soal '+(i+1)+'">';
+    var aud=k==='audio'?'<audio src="'+u+'" controls preload="metadata"></audio>':k==='pdf'?'<a class="ppdf" href="'+u+'" target="_blank" rel="noopener">📄 Buka PDF</a>':'';
     return '<div class="gbox">'+thumb+'<div class="gi"><b>'+lbl+'</b>'+info+aud+'</div>'+
       '<div class="gb"><button type="button" class="ib" data-img="'+i+'" aria-label="Ganti lampiran nomor '+(i+1)+'">'+svg('refresh')+'</button>'+
       '<button type="button" class="ib del" data-rmimg="'+i+'" aria-label="Hapus lampiran nomor '+(i+1)+'">'+svg('trash')+'</button></div></div>';
@@ -1827,6 +1847,10 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
         '<button type="button" class="abtn pri" data-linksave="'+i+'">Simpan</button><button type="button" class="abtn" data-linkcancel="'+i+'">Batal</button></div>'+
         '<p class="keyhint">Tempel link video YouTube. Untuk audio listening gunakan tombol Upload File MP3.</p>';
     }
+    if(s.tipe==='praktikum')return '<div class="atp"><button type="button" class="abtn pri" data-attach="pdf" data-i="'+i+'">'+svg('pdf')+'<span>Upload File PDF Jobdesk (maks 10 MB)</span></button>'+
+      '<button type="button" class="abtn" data-attach="file" data-i="'+i+'">'+svg('image')+'<span>Tambahkan Gambar</span></button>'+
+      '<button type="button" class="abtn" data-attach="link" data-i="'+i+'">'+svg('clip')+'<span>Video (Link YouTube)</span></button></div>'+
+      '<p class="keyhint">Jobdesk bisa diketik di kolom atas, diunggah sebagai file PDF, atau keduanya.</p>';
     return '<div class="atp"><button type="button" class="abtn" data-attach="file" data-i="'+i+'">'+svg('image')+'<span>Tambahkan Gambar</span></button>'+
       '<button type="button" class="abtn" data-attach="mp3" data-i="'+i+'">'+svg('upload')+'<span>Upload File MP3 (maks 1 MB)</span></button>'+
       '<button type="button" class="abtn" data-attach="link" data-i="'+i+'">'+svg('clip')+'<span>Video (Link YouTube)</span></button></div>';
@@ -1837,8 +1861,8 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
         (s.tipe==='tts'?'<select data-f="arah" aria-label="Arah pertanyaan '+(i+1)+'"><option value="mendatar"'+(s.arah!=='menurun'?' selected':'')+'>Mendatar</option><option value="menurun"'+(s.arah==='menurun'?' selected':'')+'>Menurun</option></select>':'')+
         '<label class="sk">Skor<input data-f="skor" type="number" inputmode="numeric" min="0" max="100" step="1" value="'+esc(s.skor)+'" aria-label="Skor soal '+(i+1)+'"></label>'+
         '<button type="button" class="ib'+((s._prev||s.gambar)?' has':'')+'" data-img="'+i+'" title="'+((s._prev||s.gambar)?'Ganti lampiran (gambar, file MP3, atau video)':'Tambah lampiran (gambar, file MP3, atau video)')+'" aria-label="'+((s._prev||s.gambar)?'Ganti':'Tambah')+' lampiran nomor '+(i+1)+'">'+svg('clip')+'</button>'+
-        '<button type="button" class="ib del" data-rm="'+i+'" aria-label="Hapus nomor '+(i+1)+'">'+svg('trash')+'</button></div>'+
-        '<textarea data-f="teks" maxlength="1000" placeholder="'+(s.tipe==='tts'?'Petunjuk / pertanyaan untuk kotak ini…':s.tipe==='bs'?'Tulis pernyataan di sini…':'Tulis pertanyaan di sini…')+'" aria-label="Pertanyaan '+(i+1)+'">'+esc(s.teks)+'</textarea>'+attachHtml(s,i)+gbrHtml(s,i);
+        (s.tipe==='praktikum'?'':'<button type="button" class="ib del" data-rm="'+i+'" aria-label="Hapus nomor '+(i+1)+'">'+svg('trash')+'</button>')+'</div>'+
+        '<textarea data-f="teks" maxlength="1000" placeholder="'+(s.tipe==='praktikum'?'Tulis uraian jobdesk praktikum di sini (mis. langkah 1, 2, 3…), atau unggah file PDF jobdesk di bawah…':s.tipe==='tts'?'Petunjuk / pertanyaan untuk kotak ini…':s.tipe==='bs'?'Tulis pernyataan di sini…':'Tulis pertanyaan di sini…')+'" aria-label="Pertanyaan '+(i+1)+'">'+esc(s.teks)+'</textarea>'+attachHtml(s,i)+gbrHtml(s,i);
       if(s.tipe==='pg'){
         h+='<div class="opts">'+s.opsi.map(function(o,j){
           return '<div class="op"><label class="rd" title="Tandai sebagai jawaban benar"><input type="radio" name="k'+i+'" data-f="kunci" value="'+j+'"'+(s.kunci===j?' checked':'')+' aria-label="Jawaban benar '+'ABCD'.charAt(j)+'"><span>'+'ABCD'.charAt(j)+'</span></label>'+
@@ -1850,7 +1874,8 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
       }else if(s.tipe==='tts'){
         h+='<div class="tj"><input class="oi" data-f="jawaban" maxlength="30" autocapitalize="characters" placeholder="JAWABAN (satu kata, huruf saja)" value="'+esc(s.jawaban)+'" aria-label="Jawaban '+(i+1)+'"></div><p class="klen">'+(s.jawaban?s.jawaban.length+' kotak':'Jawaban tanpa spasi atau angka')+'</p>';
       }else{
-        h+='<div class="opts"><textarea data-f="kunci" maxlength="1000" placeholder="Pedoman / kunci jawaban (untuk penilaian guru)" aria-label="Pedoman jawaban '+(i+1)+'">'+esc(s.kunci||'')+'</textarea></div>';
+        var prk=s.tipe==='praktikum';
+        h+='<div class="opts"><textarea data-f="kunci" maxlength="1000" placeholder="'+(prk?'Pedoman / kriteria penilaian praktik (untuk guru)':'Pedoman / kunci jawaban (untuk penilaian guru)')+'" aria-label="'+(prk?'Pedoman penilaian ':'Pedoman jawaban ')+(i+1)+'">'+esc(s.kunci||'')+'</textarea></div>'+(prk?'<p class="keyhint">Siswa menjawab dengan mengunggah foto atau video hasil praktik.</p>':'');
       }
       return h+'</div>';
     }).join(''):'<div class="noq">Belum ada butir soal. Tekan tombol di bawah untuk menambahkan.</div>';
@@ -1870,6 +1895,10 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
       ex:['Contoh','Sebutkan tiga manfaat bersikap jujur!','Dipercaya orang lain, hati tenang, dicintai Allah.',20],
       w:[9,55,55,8],
       note:['Pedoman Jawaban boleh dikosongkan (dipakai guru saat menilai).']},
+    praktikum:{file:'Praktikum',head:['No','Tugas Praktikum','Pedoman Penilaian','Skor'],
+      ex:['Contoh','1) Siapkan alat dan bahan wudhu. 2) Praktikkan wudhu sesuai urutan. 3) Rekam video atau foto hasilnya.','Urutan wudhu benar, gerakan tertib, bacaan niat tepat, foto/video jelas.',20],
+      w:[9,60,55,8],
+      note:['Siswa menjawab dengan mengunggah foto atau video hasil praktik.','Pedoman Penilaian boleh dikosongkan (dipakai guru saat menilai).']},
     tts:{file:'Teka_Teki_Silang',head:['No','Petunjuk / Pertanyaan','Jawaban (satu kata, huruf saja)','Arah (Mendatar/Menurun)','Skor'],
       ex:['Contoh','Malaikat penyampai wahyu','JIBRIL','Menurun',10],
       w:[9,55,28,24,8],
@@ -1937,7 +1966,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
           if(/^(benar|b|true|ya|1)$/.test(kv))q.kunci=true;
           else if(/^(salah|s|false|tidak|0)$/.test(kv))q.kunci=false;
           else e.push('kunci harus Benar atau Salah');
-        }else if(newTipe==='essay'){
+        }else if(newTipe==='essay'||newTipe==='praktikum'){
           q.kunci=cell(r[2]);
           if(q.kunci.length>1000)e.push('pedoman lebih dari 1000 karakter');
         }else{
@@ -1967,6 +1996,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     $('qSum').textContent=draft.length+' butir · total skor '+t;
   }
   $('bAddQ').addEventListener('click',function(){
+    if(newTipe==='praktikum'&&draft.length>=1)return;
     draft.push(blankSoal(newTipe));
     renderDraft();
     var cards=$('qList').querySelectorAll('.qb'),last=cards[cards.length-1];
@@ -1987,11 +2017,11 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     var a=ev.target.closest('[data-attach]');
     if(a){
       var sa=draft[+a.dataset.i];if(!sa)return;
-      if(a.dataset.attach==='file'||a.dataset.attach==='mp3'){
-        var mp=a.dataset.attach==='mp3';
+      if(a.dataset.attach==='file'||a.dataset.attach==='mp3'||a.dataset.attach==='pdf'){
+        var mp=a.dataset.attach==='mp3',pf=a.dataset.attach==='pdf';
         sa._ui=null;gbrIdx=+a.dataset.i;fGbr.value='';
-        fGbr.dataset.mode=mp?'mp3':'img';
-        fGbr.accept=mp?'audio/mpeg,.mp3':'image/*';
+        fGbr.dataset.mode=pf?'pdf':mp?'mp3':'img';
+        fGbr.accept=pf?'application/pdf,.pdf':mp?'audio/mpeg,.mp3':'image/*';
         fGbr.click();renderDraft();
       }
       else{sa._ui='link';renderDraft();focusLink(+a.dataset.i);}
@@ -2031,14 +2061,18 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     var f=fGbr.files&&fGbr.files[0],s=draft[gbrIdx];if(!f||!s)return;
     var kind=fileKind(f);
     var mode=fGbr.dataset.mode||'img';
+    if(mode==='pdf'&&kind!=='pdf'){toast('Pilih file PDF.','err');return;}
     if(mode==='mp3'&&kind!=='audio'){toast('Pilih file MP3.','err');return;}
     if(mode==='img'&&kind!=='image'){toast('Pilih file gambar. Untuk audio gunakan Upload File MP3.','err');return;}
-    if(!kind){toast('File harus berupa gambar atau MP3.','err');return;}
+    if(!kind){toast('File harus berupa gambar, PDF, atau MP3.','err');return;}
     try{
       var b,ext,mime;
       if(kind==='image'){
         toast('Mengompres gambar…');
         b=await kompres(f);ext='jpg';mime='image/jpeg';
+      }else if(kind==='pdf'){
+        if(f.size>PDF_MAX){toast('File PDF terlalu besar ('+fmtSize(f.size)+'). Maksimal '+fmtSize(PDF_MAX)+'.','err');return;}
+        b=f;ext='pdf';mime='application/pdf';
       }else{
         if(kind==='audio'&&!(/\.mp3$/i.test(String(f.name||''))||f.type==='audio/mpeg')){toast('Audio harus berformat MP3.','err');return;}
         var max=kind==='video'?VID_MAX:AUD_MAX;
@@ -2053,7 +2087,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
       if(s._prev)URL.revokeObjectURL(s._prev);
       s._blob=b;s._prev=URL.createObjectURL(b);s._kind=kind;s._ext=ext;s._mime=mime;
       renderDraft();
-      toast((kind==='image'?'Gambar':kind==='video'?'Video':'Audio')+' siap ('+fmtSize(b.size)+'). Tersimpan saat soal disimpan.','ok');
+      toast((kind==='image'?'Gambar':kind==='pdf'?'File PDF':kind==='video'?'Video':'Audio')+' siap ('+fmtSize(b.size)+'). Tersimpan saat soal disimpan.','ok');
     }catch(e){toast(e.message||'Gagal memproses lampiran.','err');}
   });
   /* perubahan nilai: tidak merender ulang agar kursor tidak hilang */
@@ -2101,7 +2135,8 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     }
     for(var i=0;i<draft.length;i++){
       var s=draft[i],n=i+1;
-      if(!(s.teks||'').trim()){toast('Pertanyaan nomor '+n+' belum diisi.','err');return;}
+      if(s.tipe==='praktikum'){if(!(s.teks||'').trim()&&!s.gambar&&!s._blob){toast('Jobdesk praktikum belum diisi. Ketik uraiannya atau unggah file PDF.','err');return;}}
+      else if(!(s.teks||'').trim()){toast('Pertanyaan nomor '+n+' belum diisi.','err');return;}
       if(s.tipe==='pg'){
         if(s.opsi.some(function(o){return !o.trim();})){toast('Semua pilihan jawaban nomor '+n+' wajib diisi.','err');return;}
         if(s.kunci==null){toast('Tandai jawaban benar untuk nomor '+n+'.','err');return;}
@@ -2114,7 +2149,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     var kkmRaw=$('nKkm').value,kkm=/^\d+$/.test(kkmRaw)?Number(kkmRaw):null;
     var materi=$('nMateri').value||'';
     var rec={judul:'',kelas:kelas,semester:sem,materi:materi,matapelajaran:mapel,kategori:kat,ke:ke,kkm:kkm,bentuk:newTipe,deskripsi:$('nDesk').value.trim(),
-      soal:draft.map(function(s){var c=JSON.parse(JSON.stringify(s,function(k,v){return k==='_blob'||k==='_prev'?undefined:v;}));c._blob=s._blob||null;c.teks=c.teks.trim();return c;})};
+      soal:draft.map(function(s){var c=JSON.parse(JSON.stringify(s,function(k,v){return k==='_blob'||k==='_prev'?undefined:v;}));c._blob=s._blob||null;c.teks=c.teks.trim();if(c.tipe==='praktikum'&&!c.teks)c.teks='Kerjakan praktikum sesuai petunjuk pada file jobdesk terlampir.';return c;})};
     rec.judul=katLabel(rec)+(materi?' — '+materi:'');
     var was=editId!==null;
     setBusy(true);
@@ -2159,6 +2194,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     return isNaN(k)?KKTP:k;
   }
   function stOf(r){
+    if(r.belum)return 'x';
     if(r.koreksi&&r.nilai===null)return 'k';
     if(r.nilai===null)return 'n';
     return r.nilai>=kkmOf(r.pid)?'t':'b';
@@ -2169,16 +2205,47 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     var list=riwayat.filter(function(r){
       return (!fk||r.kelas===fk)&&(!fs||stOf(r)===fs)&&(!q||r.nama.toLowerCase().indexOf(q)>-1||String(r.nisn).toLowerCase().indexOf(q)>-1);
     });
-    var pill={t:'<span class="pill g">Tuntas</span>',b:'<span class="pill r">Belum tuntas</span>',k:'<span class="pill o">Perlu koreksi</span>',n:'<span class="pill m">—</span>'};
+    var pill={t:'<span class="pill g">Tuntas</span>',b:'<span class="pill r">Belum tuntas</span>',k:'<span class="pill o">Perlu koreksi</span>',n:'<span class="pill m">—</span>',x:'<span class="pill m">Belum mengerjakan</span>'};
     $('hTb').innerHTML=list.length?list.map(function(r){
-      return '<tr><td>'+esc(fmtTime(r.t))+'</td><td><b>'+esc(r.nama||'-')+'</b>'+(r.nisn?'<div class="hsub">NISN '+esc(r.nisn)+'</div>':'')+'</td><td>'+esc(r.kelas||'-')+'</td><td class="cpk">'+esc(r.paket)+'</td>'+
+      return '<tr><td>'+(r.t?esc(fmtTime(r.t)):'—')+'</td><td><b>'+esc(r.nama||'-')+'</b>'+(r.nisn?'<div class="hsub">NISN '+esc(r.nisn)+'</div>':'')+'</td><td>'+esc(r.kelas||'-')+'</td><td class="cpk">'+esc(r.paket)+'</td>'+
         '<td class="num"><b>'+(r.nilai===null?'—':fmtN(r.nilai))+'</b>'+(r.maks>0?'<div class="hsub">skor '+fmtN(r.skor)+'/'+fmtN(r.maks)+'</div>':'')+'</td>'+
         '<td><div class="stc">'+pill[stOf(r)]+(perluKoreksiEssay(r)?'<button type="button" class="btn pri sm kbtn" data-kor="'+riwayat.indexOf(r)+'">Koreksi</button>':'')+'</div></td><td class="num">'+fmtDur(r.dur)+'</td></tr>';
     }).join(''):'<tr><td colspan="7" class="empty">'+(riwayat.length?'Tidak ada riwayat yang cocok.':'Belum ada siswa yang mengerjakan soal.')+'</td></tr>';
     var uniq={},sum=0,n=0;list.forEach(function(r){uniq[(r.kelas||'')+'|'+(r.siswa||r.nama)]=1;if(r.nilai!==null){sum+=r.nilai;n++;}});
-    $('hCnt').textContent=list.length+' pengerjaan';
+    var nBelum=list.filter(function(r){return r.belum;}).length;
+    $('hCnt').textContent=(list.length-nBelum)+' pengerjaan'+(nBelum?' · '+nBelum+' belum mengerjakan':'');
     $('hSis').textContent=Object.keys(uniq).length+' siswa';
     $('hAvg').textContent='Rata-rata '+(n?fmtN(sum/n):'—');
+  }
+  /* Siswa kelas yang dinilai tetapi belum punya hasil: ditarik dari mapping_siswa (halaman mapping.html) */
+  async function siswaBelumMengerjakan(done,ids){
+    if(!ids||!ids.length||!db)return [];
+    var pks=pakets.filter(function(x){return ids.indexOf(x.id)>-1;});if(!pks.length)return [];
+    var rows=[],from=0,step=1000;
+    for(;;){
+      var r=await db.from('mapping_siswa').select('siswa_id,nama_siswa,nisn,kelas,matapelajaran').order('id',{ascending:true}).range(from,from+step-1);
+      if(r.error)throw r.error;
+      rows=rows.concat(r.data||[]);
+      if(!r.data||r.data.length<step)break;
+      from+=step;
+    }
+    var have={};
+    done.forEach(function(x){have[x.pid+'|'+String(x.siswa)]=1;if(x.nisn)have[x.pid+'|n'+String(x.nisn)]=1;});
+    var out=[];
+    pks.forEach(function(pk){
+      var seen={};
+      rows.forEach(function(m){
+        if(!m.kelas||normNm(m.kelas)!==normNm(pk.kelas))return;
+        var mp=String(m.matapelajaran||'').trim();
+        if(mp){if(pk.matapelajaran){if(normNm(mp)!==normNm(pk.matapelajaran))return;}else if(typeof mine==='function'&&!mine(mp))return;}
+        var sid=String(m.siswa_id);
+        if(seen[sid]||have[pk.id+'|'+sid]||(m.nisn&&have[pk.id+'|n'+String(m.nisn)]))return;
+        seen[sid]=1;
+        out.push({t:null,nama:m.nama_siswa||'',nisn:m.nisn||'',siswa:m.siswa_id,kelas:m.kelas||'',pid:pk.id,paket:pk.judul,nilai:null,skor:0,maks:0,koreksi:false,dur:0,belum:true});
+      });
+    });
+    out.sort(function(a,b){return natSort(a.kelas,b.kelas)||String(a.nama).localeCompare(String(b.nama),'id');});
+    return out;
   }
   async function openRiwayat(pid,pref){
     var ids=pid==null?null:(Array.isArray(pid)?pid:[pid]);
@@ -2212,6 +2279,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
         return {t:x.dikirim,nama:x.nama||'',nisn:x.nisn||'',siswa:x.siswa_id,kelas:x.kelas||'',pid:x.paket_id,paket:pk?pk.judul:'Paket #'+x.paket_id,
           nilai:x.nilai===null||x.nilai===undefined?null:+x.nilai,skor:+x.skor_otomatis||0,maks:+x.skor_maks||0,koreksi:!!x.perlu_koreksi,dur:d};
       });
+      try{var bm=await siswaBelumMengerjakan(riwayat,ids);if(seq!==histSeq)return;riwayat=riwayat.concat(bm);}catch(_){}
       fillHistFilter();
       if(pref&&[].slice.call($('hKelas').options).some(function(o){return o.value===pref;}))$('hKelas').value=pref;
       renderRiwayat();
@@ -2227,7 +2295,7 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
   var korSeq=0,korCtx=null;
   function perluKoreksiEssay(r){
     var pk=pakets.filter(function(x){return x.id===r.pid;})[0];
-    return !!pk&&pk.bentuk==='essay'&&r.nilai===null;
+    return !r.belum&&!!pk&&(pk.bentuk==='essay'||pk.bentuk==='praktikum')&&r.nilai===null;
   }
   function jparse(v){
     if(typeof v==='string'){var t=v.trim();if(t&&(t.charAt(0)==='['||t.charAt(0)==='{')){try{return JSON.parse(t);}catch(_){}}}
@@ -2292,9 +2360,39 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
     if(t==='false'||t==='0'||t==='s'||t==='salah')return false;
     return null;
   }
+  /* Hasil praktik siswa: daftar berkas foto/video yang diunggah */
+  function driveId(x){
+    var m=String(x&&x.u||'').match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]+)/);
+    return m?m[1]:(x&&/^[\w-]{25,}$/.test(String(x.id||''))?String(x.id):'');
+  }
+  function korMedia(a){
+    var f=(Array.isArray(a)?a:[]).filter(function(x){return x&&typeof x.u==='string'&&/^https?:\/\//i.test(x.u);});
+    if(!f.length)return '<div class="kans nil">Siswa tidak mengunggah hasil praktik.</div>';
+    return '<div class="kmed"><em>Hasil praktik siswa ('+f.length+' berkas):</em><div class="kmg">'+f.map(function(x){
+      var u=esc(x.u),n=esc(x.n||'berkas'),d=driveId(x),vid=x.t==='video'||(!x.t&&/\.(mp4|mov|webm|m4v)(\?|$)/i.test(x.n||x.u||''));
+      if(d){
+        var view='https://drive.google.com/file/d/'+d+'/view';
+        if(vid)return '<figure><iframe src="https://drive.google.com/file/d/'+d+'/preview" allow="autoplay; fullscreen" allowfullscreen loading="lazy" title="'+n+'"></iframe><figcaption>'+n+' · <a href="'+view+'" target="_blank" rel="noopener">Buka di Drive</a></figcaption></figure>';
+        return '<figure><a href="'+view+'" target="_blank" rel="noopener"><img src="https://drive.google.com/thumbnail?id='+d+'&amp;sz=w1200" data-alt="https://lh3.googleusercontent.com/d/'+d+'" alt="'+n+'" loading="lazy" referrerpolicy="no-referrer"></a><figcaption>'+n+' · <a href="'+view+'" target="_blank" rel="noopener">Buka di Drive</a></figcaption></figure>';
+      }
+      var p=x.p?' data-p="'+esc(x.p)+'"':'';
+      if(vid)return '<figure><video src="'+u+'"'+p+' controls playsinline preload="metadata"></video><figcaption>'+n+'</figcaption></figure>';
+      return '<figure><a href="'+u+'" target="_blank" rel="noopener"><img src="'+u+'"'+p+' alt="'+n+'" loading="lazy"></a><figcaption>'+n+'</figcaption></figure>';
+    }).join('')+'</div></div>';
+  }
+  /* gambar/video gagal dimuat: coba alamat cadangan (Drive), lalu signed URL Supabase untuk bucket private */
+  $('kBody').addEventListener('error',async function(ev){
+    var el=ev.target;if(!el||!/^(IMG|VIDEO)$/.test(el.tagName)||el.dataset.tried)return;
+    el.dataset.tried='1';
+    if(el.dataset.alt){el.src=el.dataset.alt;return;}
+    if(el.dataset.p&&db){
+      try{var r=await db.storage.from('hasil_praktikum').createSignedUrl(el.dataset.p,3600);
+        if(r&&r.data&&r.data.signedUrl)el.src=r.data.signedUrl;}catch(_){}
+    }
+  },true);
   function korItem(b,i,a){
-    var sc=b.tipe==='essay'
-      ?'<label class="sin" title="Isi poin untuk jawaban ini"><input class="skin" type="number" inputmode="decimal" min="0" max="'+(+b.skor||0)+'" step="any" data-max="'+(+b.skor||0)+'" aria-label="Poin soal nomor '+(i+1)+'" placeholder="0"><span>/ '+esc(b.skor)+' poin</span></label>'
+    var sc=(b.tipe==='essay'||b.tipe==='praktikum')
+      ?'<label class="sin" title="Isi poin untuk jawaban ini"><input class="skin" type="number" inputmode="decimal" min="0" max="'+(+b.skor||0)+'" step="any" data-max="'+(+b.skor||0)+'" aria-label="Poin soal nomor '+(i+1)+'" placeholder="0"><span>/ '+fmtN(+b.skor||0)+' poin</span></label>'
       :'<span class="sc">'+(b.tipe==='tts'?(b.arah==='menurun'?'Menurun':'Mendatar')+' · ':'')+esc(b.skor)+' poin</span>';
     var h='<div class="pq"><div class="pt"><div class="qn">'+(i+1)+'</div><p>'+esc(b.teks)+'</p>'+sc+'</div>';
     if(b.tipe==='pg'){
@@ -2316,6 +2414,8 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
       h+='<div class="kans'+(tj?'':' nil')+'"><em>Jawaban siswa:</em>'+(tj?esc(tj):'Siswa tidak menjawab.')+'</div>'+
         (tj?'<div class="kvd '+(ok?'ok':'bad')+'">'+(ok?'Benar':'Salah')+'</div>':'')+
         '<div class="pkey"><em>Kunci jawaban:</em> '+esc(b.jawaban||'—')+'</div>';
+    }else if(b.tipe==='praktikum'){
+      h+=korMedia(a)+'<div class="pkey"><em>Pedoman penilaian:</em> '+esc(b.kunci||'—')+'</div>';
     }else{
       h+='<div class="kans'+(isBlank(a)?' nil':'')+'"><em>Jawaban siswa:</em>'+(isBlank(a)?'Siswa tidak menjawab.':esc(typeof a==='object'?JSON.stringify(a):a))+'</div>'+
         '<div class="pkey"><em>Pedoman jawaban:</em> '+esc(b.kunci||'—')+'</div>';
@@ -2346,13 +2446,16 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
       }else if(pk){
         butir=pk.soal.map(function(b,k){var c=Object.assign({},b);c.nomor=k+1;return c;});
       }
+      /* Praktikum: total nilai selalu 100, dibagi rata ke semua soal (1 soal = 100, 2 soal = 50/50, 4 soal = 25 each) */
+      var nPr=butir.filter(function(b){return b.tipe==='praktikum';}).length,isPr=nPr>0&&(nPr===butir.length||(pk&&pk.bentuk==='praktikum'));
+      if(isPr)butir.forEach(function(b){if(b.tipe==='praktikum')b.skor=100/nPr;});
       if(seq!==korSeq)return;
       if(!butir.length){$('kBody').innerHTML='<div class="noq">Paket ini belum memiliki butir soal.</div>';return;}
       if(!row){$('kBody').innerHTML='<div class="noq">Data pengerjaan siswa tidak ditemukan.</div>';return;}
       var fa=findAnswers(row),warn='';
       if(!fa)warn='<div class="noq">Jawaban siswa tidak ditemukan pada tabel hasil_asesmen. Kolom yang ada: '+esc(Object.keys(row).join(', '))+'.</div>';
       $('kBody').innerHTML=warn+butir.map(function(b,k){return korItem(b,k,fa?ansOf(fa.val,b,k):undefined);}).join('');
-      korCtx={i:i,row:row,maks:butir.reduce(function(t,b){return t+(+b.skor||0);},0)};
+      korCtx={i:i,row:row,maks:isPr?100:butir.reduce(function(t,b){return t+(+b.skor||0);},0)};
       $('kTot').hidden=false;$('kSend').disabled=false;kRecalc();
     }catch(e){
       if(seq!==korSeq)return;
@@ -2618,28 +2721,31 @@ a.kls.mt:hover{color:var(--accent);text-decoration:underline}
   /* ---------- Cetak naskah soal (kertas) ---------- */
   var MAPEL='Pendidikan Agama Islam';   /* ganti bila mata pelajaran berbeda */
   var KAT_FULL={UH:'Ulangan Harian',UTS:'Ujian Tengah Semester',UAS:'Ujian Akhir Semester'};
-  var NK_SEC={pg:'Soal Pilihan Ganda',bs:'Soal Benar Salah',essay:'Soal Essay',tts:'Soal Teka-Teki Silang'};
+  var NK_SEC={pg:'Soal Pilihan Ganda',bs:'Soal Benar Salah',essay:'Soal Essay',tts:'Soal Teka-Teki Silang',praktikum:'Tugas Praktikum'};
   var NK_PET={
     pg:'Pilihlah satu jawaban yang paling tepat dengan memberi tanda silang (X) atau lingkaran pada huruf A, B, C, atau D.',
     bs:'Tentukan apakah setiap pernyataan Benar atau Salah dengan melingkari huruf B (Benar) atau S (Salah).',
     essay:'Jawablah setiap pertanyaan dengan uraian yang jelas pada tempat yang tersedia, menggunakan bahasa sendiri.',
-    tts:'Tulislah jawaban pada kotak yang tersedia, satu huruf untuk setiap kotak, sesuai petunjuk mendatar dan menurun.'
+    tts:'Tulislah jawaban pada kotak yang tersedia, satu huruf untuk setiap kotak, sesuai petunjuk mendatar dan menurun.',
+    praktikum:'Kerjakan rangkaian praktik sesuai langkah pada soal, dokumentasikan hasilnya dengan foto atau video, lalu unggah melalui aplikasi.'
   };
   var naskahBusy=false;
   function nkImg(s,i){
     if(!s.gambar)return '';
     var k=lampKind(s.gambar);
-    if(k!=='image')return '<div class="nk-att">[Lampiran '+(k==='video'?'video':k==='audio'?'audio':'video/audio')+(isLink(s.gambar)?': '+esc(s.gambar):'')+']</div>';
+    if(k!=='image')return '<div class="nk-att">[Lampiran '+(k==='pdf'?'file PDF jobdesk':k==='video'?'video':k==='audio'?'audio':'video/audio')+(isLink(s.gambar)?': '+esc(s.gambar):'')+']</div>';
     return '<img class="nk-img" alt="Gambar soal '+(i+1)+'" src="'+esc(s.gambar)+'">';
   }
   function nkSoal(s,i){
-    var h='<div class="nk-q"><div class="nk-n">'+(i+1)+'.</div><div class="nk-b"><div class="nk-t">'+esc(s.teks)+(s.tipe==='essay'?' <span class="nk-sk">('+esc(s.skor)+' poin)</span>':'')+'</div>'+nkImg(s,i);
+    var h='<div class="nk-q"><div class="nk-n">'+(i+1)+'.</div><div class="nk-b"><div class="nk-t">'+esc(s.teks)+(s.tipe==='essay'||s.tipe==='praktikum'?' <span class="nk-sk">('+esc(s.skor)+' poin)</span>':'')+'</div>'+nkImg(s,i);
     if(s.tipe==='pg'){
       h+=(s.opsi||[]).map(function(o,j){return '<div class="nk-o"><b>'+'ABCDE'.charAt(j)+'.</b><span>'+esc(o)+'</span></div>';}).join('');
     }else if(s.tipe==='bs'){
       h+='<div class="nk-bs"><span><b>B.</b> Benar</span><span><b>S.</b> Salah</span></div>';
     }else if(s.tipe==='tts'){
       h+='<div class="nk-box">'+String(s.jawaban||'').split('').map(function(){return '<i></i>';}).join('')+'</div>';
+    }else if(s.tipe==='praktikum'){
+      h+='<div class="nk-att">[Jawaban: unggah foto atau video hasil praktik melalui aplikasi]</div>';
     }else{
       var n=(+s.skor||0)<=10?3:(+s.skor||0)<=20?5:7,l='';
       for(var k=0;k<n;k++)l+='<div class="nk-ln"></div>';
