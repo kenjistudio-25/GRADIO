@@ -407,6 +407,26 @@ tr.lk .cb input{cursor:not-allowed}
   .pt-fb body,.pt-fb .wrap{animation:none!important}
   .pt-fb.pt-out body{transition:none}
 }
+
+/* ===== Materi Ajar: ketik manual / pilih dari daftar ===== */
+.cbx{position:relative}
+.fld .cbx input,.modal .fld .cbx input{padding-right:46px}
+.cbx-t{position:absolute;right:5px;top:5px;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:var(--muted);transition:background .15s,transform .2s}
+.cbx-t:hover{background:var(--track);color:var(--text)}
+.cbx-t svg{width:18px;height:18px}
+.cbx.open .cbx-t svg{transform:rotate(180deg)}
+.cbx-list{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;max-height:260px;overflow-y:auto;overscroll-behavior:contain;padding:6px;border-radius:14px;
+  background:#fff;box-shadow:0 14px 36px rgba(20,50,90,.22),0 0 0 .5px rgba(0,0,0,.12)}
+.cbx-cap{padding:6px 10px 6px;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);white-space:normal}
+.cbx-o{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:10px;font-size:14px;font-weight:600;line-height:1.35;white-space:normal;overflow-wrap:anywhere}
+.cbx-o:hover,.cbx-o.act{background:rgba(74,166,230,.14)}
+.cbx-o.sel{color:#1f6fa8;background:rgba(74,166,230,.1)}
+.cbx-empty{padding:10px 12px 12px;font-size:13px;color:var(--muted);line-height:1.45}
+@media (max-width:640px){
+  .modal .fld .cbx input{padding-right:40px}
+  .cbx-t{width:30px;height:30px;top:3px;right:4px}
+  .cbx-o{font-size:13px;padding:9px 10px}
+}
 </style>
 <script>
 /* Transisi halaman: halaman baru "keluar" dari tombol yang diklik (seperti membuka jendela dari Dock macOS);
@@ -538,7 +558,11 @@ tr.lk .cb input{cursor:not-allowed}
             <div class="fld"><label for="tanggal">Tanggal <em>*</em></label><input id="tanggal" type="date" required></div>
             <div class="fld"><label for="kelas">Kelas <em>*</em></label><select id="kelas" required><option value="">Memuat kelas…</option></select></div>
             <div class="fld"><label for="mapel">Pilih Mata Pelajaran <em>*</em></label><select id="mapel" required><option value="">Memuat mata pelajaran…</option></select></div>
-            <div class="fld full"><label for="materi">Materi Ajar <em>*</em></label><input id="materi" required maxlength="150" list="dlMateri" placeholder="contoh: Rukun Iman"><datalist id="dlMateri"></datalist></div>
+            <div class="fld full"><label for="materi">Materi Ajar <em>*</em></label><div class="cbx" id="cbx">
+              <input id="materi" required maxlength="150" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="cbxList" aria-autocomplete="list" placeholder="Ketik manual atau pilih dari materi ajar">
+              <button type="button" class="cbx-t" id="cbxT" aria-label="Pilih dari daftar materi ajar" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+              <div class="cbx-list" id="cbxList" role="listbox" hidden></div>
+            </div></div>
             <div class="fld full"><span class="state" id="state">Pilih kelas untuk menampilkan daftar siswa.</span></div>
           </div>
         </section>
@@ -842,10 +866,7 @@ tr.lk .cb input{cursor:not-allowed}
     else{st.textContent='Belum disimpan. Semua siswa ditandai Hadir secara bawaan, ubah sesuai kebutuhan.';st.className='state new';}
     renderStudents();
   }
-  function fillMateri(){
-    var set={};saved.forEach(function(r){if(r.materi_ajar)set[r.materi_ajar]=1;});
-    $('dlMateri').innerHTML=Object.keys(set).map(function(n){return '<option value="'+esc(n)+'">';}).join('');
-  }
+  function fillMateri(){if(!$('cbxList').hidden)renderCbx();}
 
   /* ---------- Render ---------- */
   function renderStudents(){
@@ -1080,10 +1101,10 @@ tr.lk .cb input{cursor:not-allowed}
   /* ---------- Perubahan filter ---------- */
   $('kelas').addEventListener('change',async function(){
     if(busy)return;setBusy(true);
-    await loadSiswa();await loadSaved();setBusy(false);
+    await loadSiswa();await loadSaved();fillMateri();setBusy(false);
   });
   $('tanggal').addEventListener('change',function(){if(!busy)loadSaved();});
-  $('mapel').addEventListener('change',function(){if(busy)return;pickSaved();applyExisting();});
+  $('mapel').addEventListener('change',function(){if(busy)return;pickSaved();applyExisting();fillMateri();});
   $('tabs').addEventListener('click',function(ev){
     var b=ev.target.closest('.tab');if(!b)return;
     tabKelas=b.dataset.k||'';page=1;renderSaved();
@@ -1093,18 +1114,98 @@ tr.lk .cb input{cursor:not-allowed}
   $('pgPrev').addEventListener('click',function(){if(page>1){page--;renderSaved();}});
   $('pgNext').addEventListener('click',function(){page++;renderSaved();});
 
+  /* ---------- Materi Ajar: ketik manual atau pilih dari tabel materi (halaman materi.html) ---------- */
+  var materiRows=[],cbxTyped=false,cbxAct=-1,cbxItems=[];
+  async function loadMateri(){
+    try{
+      await ensureMapel();
+      var out=[],from=0,step=1000;
+      for(;;){
+        var r=await db.from('materi').select('nama_bahan_ajar,matapelajaran,kelas').range(from,from+step-1);
+        if(r.error)throw r.error;
+        out=out.concat(r.data||[]);
+        if(!r.data||r.data.length<step)break;
+        from+=step;
+      }
+      materiRows=out.filter(function(x){return clean(x.nama_bahan_ajar)&&mine(x.matapelajaran);});   /* hanya materi milik guru yang login */
+    }catch(e){materiRows=[];toast('Gagal memuat daftar materi ajar: '+tableMsg(e),'err');}
+    fillMateri();
+  }
+  function materiOptions(){
+    var k=clean($('kelas').value),p=normNm($('mapel').value),seen={},out=[];
+    function add(n){n=clean(n);var key=n.toLowerCase();if(n&&!seen[key]){seen[key]=1;out.push(n);}}
+    materiRows.forEach(function(r){
+      if(k&&clean(r.kelas)!==k)return;
+      if(p&&normNm(r.matapelajaran)!==p)return;
+      add(r.nama_bahan_ajar);
+    });
+    out.sort(function(a,b){return a.localeCompare(b,'id',{numeric:true});});
+    saved.forEach(function(r){add(r.materi_ajar);});   /* materi yang sudah dipakai pada absensi kelas+tanggal+mapel ini */
+    return out;
+  }
+  function renderCbx(){
+    var all=materiOptions(),q=cbxTyped?clean($('materi').value).toLowerCase():'',cur=clean($('materi').value).toLowerCase();
+    cbxItems=q?all.filter(function(n){return n.toLowerCase().indexOf(q)>-1;}):all;
+    var k=clean($('kelas').value),p=clean($('mapel').value);
+    var h='<div class="cbx-cap">Materi ajar'+(k?' · '+esc(k):'')+(p?' · '+esc(p):'')+'</div>';
+    if(!cbxItems.length){
+      h+='<div class="cbx-empty">'+(q?'Tidak ada yang cocok. Teks yang Anda ketik akan dipakai apa adanya.':'Belum ada materi ajar untuk pilihan ini. Ketik manual saja.')+'</div>';
+    }else{
+      h+=cbxItems.map(function(n,i){
+        return '<button type="button" class="cbx-o'+(i===cbxAct?' act':'')+(n.toLowerCase()===cur?' sel':'')+'" role="option" data-n="'+i+'">'+esc(n)+'</button>';
+      }).join('');
+    }
+    $('cbxList').innerHTML=h;
+  }
+  function openCbx(){renderCbx();$('cbxList').hidden=false;$('cbx').classList.add('open');$('materi').setAttribute('aria-expanded','true');}
+  function closeCbx(){cbxAct=-1;$('cbxList').hidden=true;$('cbx').classList.remove('open');$('materi').setAttribute('aria-expanded','false');}
+  function pickCbx(i){
+    if(i<0||i>=cbxItems.length)return;
+    $('materi').value=cbxItems[i];closeCbx();$('materi').focus({preventScroll:true});
+  }
+  function moveCbx(d){
+    if(!cbxItems.length)return;
+    cbxAct=(cbxAct+d+cbxItems.length)%cbxItems.length;
+    var os=$('cbxList').querySelectorAll('.cbx-o');
+    Array.prototype.forEach.call(os,function(o,i){o.classList.toggle('act',i===cbxAct);});
+    if(os[cbxAct]&&os[cbxAct].scrollIntoView)os[cbxAct].scrollIntoView({block:'nearest'});
+  }
+  $('materi').addEventListener('input',function(){cbxTyped=true;cbxAct=-1;openCbx();});
+  $('materi').addEventListener('click',function(){if($('cbxList').hidden){cbxTyped=false;cbxAct=-1;openCbx();}});
+  $('materi').addEventListener('keydown',function(e){
+    var open=!$('cbxList').hidden;
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+      e.preventDefault();
+      if(!open){cbxTyped=false;cbxAct=-1;openCbx();}
+      moveCbx(e.key==='ArrowDown'?1:-1);
+    }else if(e.key==='Enter'){
+      if(open&&cbxAct>-1){e.preventDefault();e.stopPropagation();pickCbx(cbxAct);}
+    }else if(e.key==='Escape'){
+      if(open){e.preventDefault();e.stopPropagation();closeCbx();}
+    }else if(e.key==='Tab'){closeCbx();}
+  });
+  $('cbxT').addEventListener('click',function(){
+    if(!$('cbxList').hidden){closeCbx();return;}
+    cbxTyped=false;cbxAct=-1;openCbx();$('materi').focus({preventScroll:true});
+  });
+  $('cbxList').addEventListener('mousedown',function(e){e.preventDefault();});
+  $('cbxList').addEventListener('click',function(e){
+    var o=e.target.closest('.cbx-o');if(o)pickCbx(+o.dataset.n);
+  });
+  document.addEventListener('mousedown',function(e){if(!$('cbx').contains(e.target))closeCbx();});
+
   /* ---------- Modal ---------- */
   function openModal(){
     $('materi').value='';$('mapel').value='';$('kelas').value='';$('tanggal').value=today();
     students=[];stat=[];locked=[];saved=[];existing=0;noSlot=false;
-    applyExisting();
+    applyExisting();closeCbx();loadMateri();
     $('mBd').hidden=false;document.body.classList.add('lock');
     $('mBd').querySelector('.m-body').scrollTop=0;
     setTimeout(function(){$('kelas').focus({preventScroll:true});},30);
   }
   function closeModal(){
     if($('mBd').hidden)return;
-    $('mBd').hidden=true;document.body.classList.remove('lock');
+    closeCbx();$('mBd').hidden=true;document.body.classList.remove('lock');
     $('bNew').focus({preventScroll:true});
   }
   $('bNew').addEventListener('click',function(){if(!busy)openModal();});
@@ -1359,6 +1460,7 @@ tr.lk .cb input{cursor:not-allowed}
   loadKelas();
   ensureMapel();
   loadSaved();
+  loadMateri();
 })();
 </script>
 </body>
